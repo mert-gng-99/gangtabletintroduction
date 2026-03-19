@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VORP Illegal — Protection (Haraç) Sistemi</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080808;--bg2:#0f0f0f;
+  --surface:rgba(255,255,255,0.04);--surface2:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --text:#f5f5f7;--text2:rgba(255,255,255,0.55);--text3:rgba(255,255,255,0.28);
+  --accent:#30d158;--blue:#0a84ff;--red:#ff453a;
+  --yellow:#ffd60a;--purple:#bf5af2;--teal:#64d2ff;--orange:#ff9f0a;
+  --r:12px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:120px 24px 80px;overflow:hidden}
+.hg1{position:absolute;width:900px;height:600px;background:radial-gradient(ellipse,rgba(48,209,88,0.09) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.hg2{position:absolute;width:500px;height:400px;background:radial-gradient(ellipse,rgba(255,69,58,0.07) 0%,transparent 65%);top:25%;right:8%;pointer-events:none}
+.hg3{position:absolute;width:400px;height:400px;background:radial-gradient(ellipse,rgba(10,132,255,0.05) 0%,transparent 65%);bottom:20%;left:8%;pointer-events:none}
+
+.pill{display:inline-flex;align-items:center;gap:6px;background:rgba(48,209,88,0.12);border:1px solid rgba(48,209,88,0.28);color:var(--accent);font-size:12px;font-weight:500;letter-spacing:.06em;padding:6px 16px;border-radius:100px;margin-bottom:32px;animation:fadeUp .8s ease both}
+.pill-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+h1{font-family:'DM Serif Display',serif;font-size:clamp(48px,8.5vw,108px);font-weight:400;line-height:1;letter-spacing:-.02em;color:var(--text);animation:fadeUp .8s .1s ease both}
+h1 em{font-style:italic;color:var(--accent)}
+
+.hero-sub{margin-top:24px;font-size:18px;font-weight:300;color:var(--text2);max-width:580px;line-height:1.7;animation:fadeUp .8s .2s ease both}
+
+.hero-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;margin-top:44px;animation:fadeUp .8s .3s ease both}
+.hstat{text-align:center}
+.hstat-val{font-family:'DM Serif Display',serif;font-size:38px;line-height:1}
+.hstat-lbl{font-size:11px;color:var(--text3);letter-spacing:.07em;text-transform:uppercase;margin-top:3px}
+
+.hero-nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:40px;animation:fadeUp .8s .35s ease both}
+.hero-nav a{color:var(--text2);text-decoration:none;font-size:13px;font-weight:500;padding:9px 18px;border-radius:100px;border:1px solid var(--border);background:var(--surface);transition:all .2s}
+.hero-nav a:hover{background:var(--surface2);border-color:var(--border2);color:var(--text)}
+
+.scroll-hint{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text3);font-size:11px;letter-spacing:.12em;animation:fadeUp 1s .6s ease both}
+.scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,var(--border2),transparent);animation:sp 2s infinite}
+@keyframes sp{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* NAV */
+.snav{position:sticky;top:0;z-index:100;padding:0 40px;background:rgba(8,8,8,.88);backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow-x:auto;scrollbar-width:none}
+.snav::-webkit-scrollbar{display:none}
+.nlogo{font-family:'DM Serif Display',serif;font-size:16px;color:var(--text);margin-right:28px;white-space:nowrap;flex-shrink:0;padding:16px 0}
+.nlogo span{color:var(--accent)}
+.snav a{color:var(--text3);text-decoration:none;font-size:13px;font-weight:500;padding:18px 14px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;flex-shrink:0}
+.snav a:hover{color:var(--text)}
+.snav a.active{color:var(--text);border-bottom-color:var(--accent)}
+
+/* LAYOUT */
+.wrap{max-width:1100px;margin:0 auto;padding:0 40px}
+@media(max-width:600px){.wrap{padding:0 20px}}
+section{padding:100px 0 0;opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+section.visible{opacity:1;transform:none}
+.eyebrow{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+h2{font-family:'DM Serif Display',serif;font-size:clamp(32px,5vw,54px);font-weight:400;letter-spacing:-.02em;line-height:1.1;color:var(--text);margin-bottom:16px}
+h2 em{font-style:italic;color:var(--text2)}
+.lead{font-size:17px;color:var(--text2);font-weight:300;max-width:640px;margin-bottom:48px;line-height:1.7}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1px}
+@media(max-width:760px){.g2,.g3{grid-template-columns:1fr}}
+@media(max-width:580px){.g4{grid-template-columns:repeat(2,1fr)}}
+
+.glass{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);transition:background .2s,border-color .2s}
+.glass:hover{background:var(--surface2);border-color:var(--border2)}
+
+/* STAT STRIP */
+.ss{background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:48px}
+.sc{background:var(--bg2);padding:24px 20px;transition:background .2s}
+.sc:hover{background:var(--surface)}
+.sv{font-family:'DM Serif Display',serif;font-size:30px;line-height:1;margin-bottom:5px}
+.sl{font-size:13px;color:var(--text2);font-weight:300}
+
+/* CODE */
+.code{background:#0b0b0f;border:1px solid var(--border);border-radius:8px;padding:16px 20px;font-family:'Courier New',monospace;font-size:12px;line-height:1.9;overflow-x:auto;white-space:pre;color:rgba(255,255,255,.42);margin:10px 0}
+.ck{color:#ff6b6b}.cv{color:var(--blue)}.cs{color:var(--accent)}.cn{color:var(--yellow)}.cc{color:rgba(255,255,255,.2);font-style:italic}.cp{color:var(--purple)}.co{color:var(--orange)}
+
+/* SCHEMA */
+.schema{border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
+.sh{padding:14px 18px;background:rgba(255,255,255,.04);border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.sh .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sr{display:flex;border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s}
+.sr:last-child{border-bottom:none}
+.sr:hover{background:rgba(255,255,255,.03)}
+.sf{width:200px;padding:11px 18px;font-size:12px;font-weight:500;color:var(--blue);font-family:'Courier New',monospace;flex-shrink:0}
+.sd{padding:11px 18px;font-size:13px;color:var(--text2);flex:1;border-left:1px solid rgba(255,255,255,.04)}
+
+/* PROCESS BOARD */
+.pb{border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.pbh{display:flex;align-items:center;gap:14px;padding:18px 22px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)}
+.pbicon{font-size:20px}.pbtitle{font-size:15px;font-weight:600;color:var(--text)}.pbbadge{margin-left:auto;font-size:12px;color:var(--text3)}
+.pbb{padding:20px 22px}
+
+/* CHECK LIST */
+.cl{display:flex;flex-direction:column;gap:8px}
+.ci-item{display:flex;align-items:flex-start;gap:12px;padding:13px 15px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid transparent;transition:all .2s}
+.ci-item:hover{border-color:var(--border)}
+.cii{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px}
+.ci-g{background:rgba(48,209,88,.15);color:var(--accent)}
+.ci-b{background:rgba(10,132,255,.15);color:var(--blue)}
+.ci-r{background:rgba(255,69,58,.15);color:var(--red)}
+.ci-y{background:rgba(255,214,10,.15);color:var(--yellow)}
+.ci-p{background:rgba(191,90,242,.15);color:var(--purple)}
+.ci-o{background:rgba(255,159,10,.15);color:var(--orange)}
+.ct{font-size:14px;color:var(--text);line-height:1.5}
+.csub{font-size:12px;color:var(--text2);margin-top:3px}
+
+/* FLOW */
+.fl{display:flex;flex-direction:column}
+.fi{display:flex;gap:18px;position:relative}
+.fi:not(:last-child)::before{content:'';position:absolute;left:19px;top:44px;bottom:0;width:1px;background:var(--border)}
+.fn{width:40px;height:40px;flex-shrink:0;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--text2);position:relative;z-index:1;transition:all .2s}
+.fi:hover .fn{background:rgba(48,209,88,.12);border-color:rgba(48,209,88,.4);color:var(--accent)}
+.fb{padding:10px 0 28px;flex:1}
+.ft2{font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px}
+.fd{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* TAG */
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;padding:2px 9px;border-radius:5px;margin:2px}
+.tg{background:rgba(48,209,88,.1);color:var(--accent);border:1px solid rgba(48,209,88,.25)}
+.tr{background:rgba(255,69,58,.1);color:var(--red);border:1px solid rgba(255,69,58,.25)}
+.tb{background:rgba(10,132,255,.1);color:var(--blue);border:1px solid rgba(10,132,255,.25)}
+.ty{background:rgba(255,214,10,.1);color:var(--yellow);border:1px solid rgba(255,214,10,.25)}
+.tp{background:rgba(191,90,242,.1);color:var(--purple);border:1px solid rgba(191,90,242,.25)}
+.to{background:rgba(255,159,10,.1);color:var(--orange);border:1px solid rgba(255,159,10,.25)}
+
+/* HBOX */
+.hbox{padding:18px 22px;border-radius:10px;border-left:3px solid;margin:12px 0}
+.hb-g{background:rgba(48,209,88,.06);border-color:var(--accent)}
+.hb-b{background:rgba(10,132,255,.06);border-color:var(--blue)}
+.hb-r{background:rgba(255,69,58,.06);border-color:var(--red)}
+.hb-y{background:rgba(255,214,10,.06);border-color:var(--yellow)}
+.hb-p{background:rgba(191,90,242,.06);border-color:var(--purple)}
+.hb-o{background:rgba(255,159,10,.06);border-color:var(--orange)}
+.hbox-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.hb-g .hbox-title{color:var(--accent)}.hb-b .hbox-title{color:var(--blue)}.hb-r .hbox-title{color:var(--red)}
+.hb-y .hbox-title{color:var(--yellow)}.hb-p .hbox-title{color:var(--purple)}.hb-o .hbox-title{color:var(--orange)}
+.hbox p{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* PIPELINE */
+.pipeline{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.ps{display:flex;align-items:stretch;border-bottom:1px solid var(--border);transition:background .2s}
+.ps:last-child{border-bottom:none}
+.ps:hover{background:rgba(255,255,255,.02)}
+.pl{width:160px;flex-shrink:0;padding:16px 18px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;gap:4px}
+.pl-layer{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.pl-file{font-family:'Courier New',monospace;font-size:11px;color:var(--text2);margin-top:2px}
+.pr{flex:1;padding:16px 20px;font-size:13px;color:var(--text2);line-height:1.65;display:flex;align-items:center}
+.parrow{width:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:16px}
+
+/* OUTCOME CARD */
+.oc{padding:16px 18px;border-radius:10px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:flex-start;gap:12px;transition:all .2s}
+.oc:hover{background:var(--surface2);border-color:var(--border2)}
+.oe{font-size:18px;flex-shrink:0}
+.ot{font-size:13px;color:var(--text2);line-height:1.5}
+.ot strong{color:var(--text);font-weight:600}
+
+/* BEHAVIOR GRID */
+.behavior-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:700px){.behavior-grid{grid-template-columns:1fr}}
+
+.bcard{border-radius:var(--r);border:1px solid;padding:24px;position:relative;overflow:hidden;transition:transform .2s}
+.bcard:hover{transform:translateY(-2px)}
+.bcard::before{content:'';position:absolute;top:0;right:0;width:80px;height:80px;border-radius:50%;transform:translate(30px,-30px);opacity:.15}
+
+.bc-loyal{border-color:rgba(48,209,88,.3);background:rgba(48,209,88,.05)}
+.bc-loyal::before{background:var(--accent)}
+.bc-scared{border-color:rgba(255,214,10,.3);background:rgba(255,214,10,.05)}
+.bc-scared::before{background:var(--yellow)}
+.bc-bargain{border-color:rgba(10,132,255,.3);background:rgba(10,132,255,.05)}
+.bc-bargain::before{background:var(--blue)}
+.bc-resist{border-color:rgba(255,69,58,.3);background:rgba(255,69,58,.05)}
+.bc-resist::before{background:var(--red)}
+
+.bc-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+.bc-loyal .bc-label{color:var(--accent)}
+.bc-scared .bc-label{color:var(--yellow)}
+.bc-bargain .bc-label{color:var(--blue)}
+.bc-resist .bc-label{color:var(--red)}
+
+.bc-cond{font-size:12px;color:var(--text2);margin-bottom:12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.bc-title{font-family:'DM Serif Display',serif;font-size:22px;color:var(--text);margin-bottom:6px}
+.bc-desc{font-size:13px;color:var(--text2);line-height:1.6}
+.bc-quote{margin-top:10px;font-size:12px;color:var(--text3);font-style:italic;border-left:2px solid;padding-left:10px}
+.bc-loyal .bc-quote{border-color:var(--accent)}
+.bc-scared .bc-quote{border-color:var(--yellow)}
+.bc-bargain .bc-quote{border-color:var(--blue)}
+.bc-resist .bc-quote{border-color:var(--red)}
+
+/* FEAR/RESPECT BARS */
+.rel-bar-row{display:flex;align-items:center;gap:10px;margin:4px 0}
+.rel-bar-label{font-size:11px;width:60px;flex-shrink:0;color:var(--text2)}
+.rel-bar-track{flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+.rel-bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.rb-fear{background:var(--red)}
+.rb-respect{background:var(--blue)}
+
+/* FORMULA BOX */
+.formula{border:1px solid var(--border);border-radius:var(--r);padding:28px;background:rgba(48,209,88,.03);position:relative;overflow:hidden}
+.formula::after{content:'f(x)';position:absolute;bottom:-10px;right:20px;font-family:'DM Serif Display',serif;font-size:80px;color:rgba(48,209,88,.04);letter-spacing:.1em;pointer-events:none}
+
+.formula-eq{font-family:'Courier New',monospace;font-size:14px;line-height:2;color:var(--text);background:rgba(0,0,0,.3);border-radius:8px;padding:16px 20px;margin:16px 0;overflow-x:auto;white-space:nowrap}
+.formula-eq .fe-hl{color:var(--accent)}
+.formula-eq .fe-num{color:var(--yellow)}
+.formula-eq .fe-op{color:var(--text2)}
+
+/* DB FUNC */
+.dbfunc{display:flex;flex-direction:column;gap:5px}
+.dbf{display:flex;align-items:baseline;gap:12px;padding:10px 16px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid transparent;transition:all .2s}
+.dbf:hover{border-color:var(--border)}
+.dbf-name{font-family:'Courier New',monospace;font-size:12px;color:var(--blue);white-space:nowrap;flex-shrink:0}
+.dbf-desc{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{text-align:left;padding:10px 16px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)}
+.tbl td{padding:13px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text2);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.tbl td:first-child{font-family:'Courier New',monospace;font-size:12px;color:var(--accent)}
+
+/* FOOTER */
+footer{margin-top:120px;padding:60px 40px;border-top:1px solid var(--border);text-align:center}
+.ftt{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);margin-bottom:8px}
+.fts{font-size:14px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hg1"></div><div class="hg2"></div><div class="hg3"></div>
+  <div class="pill"><div class="pill-dot"></div>vorp_illegal · Protection Sistemi</div>
+  <h1>Haraç &<br><em>Protection</em></h1>
+  <p class="hero-sub">İşyeri sahiplerini korkutun, saygı kazanın, haraç toplayın. Fear & Respect sistemine dayalı dinamik çete gelir motoru.</p>
+
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-val" style="color:var(--accent)">4</div><div class="hstat-lbl">Veritabanı Tablosu</div></div>
+    <div class="hstat"><div class="hstat-val" style="color:var(--blue)">18</div><div class="hstat-lbl">DB Fonksiyonu</div></div>
+    <div class="hstat"><div class="hstat-val" style="color:var(--red)">4</div><div class="hstat-lbl">NPC Davranışı</div></div>
+    <div class="hstat"><div class="hstat-val" style="color:var(--yellow)">5</div><div class="hstat-lbl">İşyeri Tipi</div></div>
+  </div>
+
+  <div class="hero-nav">
+    <a href="#mimari">Mimari</a>
+    <a href="#veritabani">Veritabanı</a>
+    <a href="#hesaplama">Formül</a>
+    <a href="#davranis">NPC Davranışı</a>
+    <a href="#kavga">Kavga</a>
+    <a href="#pazarlik">Pazarlık</a>
+    <a href="#polis">Polis İhbarı</a>
+    <a href="#client">Client</a>
+    <a href="#guvenlik">Güvenlik</a>
+    <a href="#akis">Tam Akış</a>
+  </div>
+
+  <div class="scroll-hint"><div class="scroll-line"></div>SCROLL</div>
+</div>
+
+<!-- STICKY NAV -->
+<nav class="snav">
+  <a href="index.html" style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.4);text-decoration:none;font-size:12px;font-weight:500;margin-right:20px;flex-shrink:0;transition:color .2s" onmouseover="this.style.color='rgba(255,255,255,0.85)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>Ana Sayfa</a><div class="nlogo">VORP <span>Protection</span></div>
+  <a href="#mimari">Mimari</a>
+  <a href="#veritabani">Veritabanı</a>
+  <a href="#hesaplama">Formül</a>
+  <a href="#davranis">NPC Davranışı</a>
+  <a href="#kavga">Kavga</a>
+  <a href="#pazarlik">Pazarlık</a>
+  <a href="#polis">Polis</a>
+  <a href="#client">Client</a>
+  <a href="#guvenlik">Güvenlik</a>
+  <a href="#akis">Tam Akış</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- MİMARİ -->
+  <section id="mimari">
+    <div class="eyebrow">00 — Genel Mimari</div>
+    <h2>4 Katmanlı<br><em>Sistem</em></h2>
+    <p class="lead">Veritabanından React UI'a kadar tamamen katmanlı bir yapı. Her katman kendi sorumluluğunu üstleniyor.</p>
+
+    <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:32px">
+      <table class="tbl">
+        <thead><tr><th>Katman</th><th>Dosya</th><th>Satır</th><th>Görev</th></tr></thead>
+        <tbody>
+          <tr><td>Veritabanı</td><td style="color:var(--blue);font-family:'Courier New',monospace;font-size:12px">server/database.lua</td><td style="color:var(--yellow)">+298</td><td>4 tablo, 18 DB fonksiyonu</td></tr>
+          <tr><td>Server Mantığı</td><td style="color:var(--blue);font-family:'Courier New',monospace;font-size:12px">server/protection.lua</td><td style="color:var(--yellow)">844</td><td>Hesaplama, etkileşim, admin, dispatch</td></tr>
+          <tr><td>Client Mantığı</td><td style="color:var(--blue);font-family:'Courier New',monospace;font-size:12px">client/protection.lua</td><td style="color:var(--yellow)">809</td><td>NPC spawn, kavga sistemi, NUI</td></tr>
+          <tr><td>Tablet UI</td><td style="color:var(--blue);font-family:'Courier New',monospace;font-size:12px">ProtectionApp.jsx + Admin.jsx</td><td style="color:var(--yellow)">~1090</td><td>React bileşenler, harita, CRUD</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Temel akış -->
+    <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:32px">
+      <div style="padding:16px 22px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text)">Temel Oyuncu Deneyimi</div>
+      <div style="display:flex;align-items:center;flex-wrap:wrap;padding:24px 22px;gap:0">
+        <div style="text-align:center;flex:1;min-width:90px;padding:8px">
+          <div style="font-size:26px;margin-bottom:8px">🏪</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px">İşyerine Git</div>
+          <div style="font-size:11px;color:var(--text2)">50m'de NPC spawn</div>
+        </div>
+        <div style="color:var(--text3);font-size:18px;flex-shrink:0">→</div>
+        <div style="text-align:center;flex:1;min-width:90px;padding:8px">
+          <div style="font-size:26px;margin-bottom:8px">⌨️</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px">Haraç Topla</div>
+          <div style="font-size:11px;color:var(--text2)">Target zone [E]</div>
+        </div>
+        <div style="color:var(--text3);font-size:18px;flex-shrink:0">→</div>
+        <div style="text-align:center;flex:1;min-width:90px;padding:8px">
+          <div style="font-size:26px;margin-bottom:8px">🎭</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px">NPC Tepki Verir</div>
+          <div style="font-size:11px;color:var(--text2)">loyal/scared/bargain/resist</div>
+        </div>
+        <div style="color:var(--text3);font-size:18px;flex-shrink:0">→</div>
+        <div style="text-align:center;flex:1;min-width:90px;padding:8px">
+          <div style="font-size:26px;margin-bottom:8px">💰</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px">Para / Kavga</div>
+          <div style="font-size:11px;color:var(--text2)">Fear & Respect değişir</div>
+        </div>
+        <div style="color:var(--text3);font-size:18px;flex-shrink:0">→</div>
+        <div style="text-align:center;flex:1;min-width:90px;padding:8px">
+          <div style="font-size:26px;margin-bottom:8px">⏳</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px">Cooldown</div>
+          <div style="font-size:11px;color:var(--text2)">2 saat, çete bazlı</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="g3">
+      <div class="glass" style="padding:24px">
+        <div style="font-size:26px;margin-bottom:12px">😰</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Fear (Korku)</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6">0–100 arası. Yükseldikçe NPC daha itaatkar olur. Kavga kazanınca +20, kaybedince -20.</p>
+      </div>
+      <div class="glass" style="padding:24px">
+        <div style="font-size:26px;margin-bottom:12px">🤝</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Respect (Saygı)</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6">0–100 arası. Düzenli haraç toplamak saygıyı artırır, kaba davranmak düşürür.</p>
+      </div>
+      <div class="glass" style="padding:24px">
+        <div style="font-size:26px;margin-bottom:12px">🏢</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">5 İşyeri Tipi</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6">shop 1.0×, restaurant 1.5×, garage 1.8×, warehouse 2.0×, nightclub 2.5× çarpanı.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VERİTABANI -->
+  <section id="veritabani">
+    <div class="eyebrow">01 — Veritabanı</div>
+    <h2>4 Tablo,<br><em>18 Fonksiyon</em></h2>
+    <p class="lead">İşyeri tanımlarından ilişki geçmişine kadar her şey ayrı tablolarda. Tamamen normalize edilmiş yapı.</p>
+
+    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:28px">
+
+      <div class="schema">
+        <div class="sh"><div class="dot" style="background:var(--accent)"></div>tablet_protection_businesses — Admin Tanımlı İşyerleri</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr">
+          <div>
+            <div class="sr"><div class="sf">id, name</div><div class="sd">İşyeri ID ve görünen adı</div></div>
+            <div class="sr"><div class="sf">owner_name</div><div class="sd">NPC sahibin adı (diyalogda kullanılır)</div></div>
+            <div class="sr"><div class="sf">ped_model</div><div class="sd">GTA ped modeli</div></div>
+          </div>
+          <div>
+            <div class="sr"><div class="sf">business_type</div><div class="sd"><span class="tag tg">shop</span><span class="tag tb">restaurant</span><span class="tag ty">warehouse</span><span class="tag to">garage</span><span class="tag tp">nightclub</span></div></div>
+            <div class="sr"><div class="sf">base_value</div><div class="sd">Temel haraç değeri (örn. $500)</div></div>
+            <div class="sr"><div class="sf">x, y, z, heading</div><div class="sd">Dünya koordinatları</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="schema">
+        <div class="sh"><div class="dot" style="background:var(--blue)"></div>tablet_protection_claims — Gang Kontrol Tablosu</div>
+        <div class="sr"><div class="sf">business_id</div><div class="sd"><strong>UNIQUE</strong> — Bir işyeri sadece bir gang'e ait olabilir</div></div>
+        <div class="sr"><div class="sf">gang_id</div><div class="sd">Kontrolcü çetenin ID'si</div></div>
+        <div class="sr"><div class="sf">last_collected</div><div class="sd">Son haraç toplama zamanı — cooldown hesabı için</div></div>
+      </div>
+
+      <div class="schema">
+        <div class="sh"><div class="dot" style="background:var(--red)"></div>tablet_protection_relations — Fear & Respect İlişkisi</div>
+        <div class="sr"><div class="sf">business_id + gang_id</div><div class="sd"><strong>UNIQUE çift</strong> — Her gang-işyeri ikilisi için ayrı kayıt</div></div>
+        <div class="sr"><div class="sf">fear</div><div class="sd">0–100 korku seviyesi</div></div>
+        <div class="sr"><div class="sf">respect</div><div class="sd">0–100 saygı seviyesi</div></div>
+        <div class="sr"><div class="sf">total_collections, total_earned</div><div class="sd">İstatistikler — toplam haraç sayısı ve toplam kazanç</div></div>
+      </div>
+
+      <div class="schema">
+        <div class="sh"><div class="dot" style="background:var(--yellow)"></div>tablet_protection_history — Etkileşim Geçmişi (Log)</div>
+        <div class="sr"><div class="sf">event_type</div><div class="sd"><span class="tag tg">collection</span><span class="tag tg">fight_won</span><span class="tag tr">fight_lost</span><span class="tag tb">bargain_accepted</span><span class="tag tr">bargain_rejected</span></div></div>
+        <div class="sr"><div class="sf">amount</div><div class="sd">O etkileşimde alınan/alınmayan miktar</div></div>
+        <div class="sr"><div class="sf">fear_change, respect_change</div><div class="sd">Bu etkileşimin Fear/Respect'e etkisi</div></div>
+      </div>
+
+    </div>
+
+    <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:14px">18 DB Fonksiyonu</div>
+    <div class="dbfunc">
+      <div class="dbf"><div class="dbf-name">DB.GetProtectionBusinesses(cb)</div><div class="dbf-desc">Tüm aktif işyerlerini getir</div></div>
+      <div class="dbf"><div class="dbf-name">DB.GetProtectionBusiness(id, cb)</div><div class="dbf-desc">Tek işyeri detayı</div></div>
+      <div class="dbf"><div class="dbf-name">DB.CreateProtectionBusiness(data, cb)</div><div class="dbf-desc">Yeni işyeri ekle (admin)</div></div>
+      <div class="dbf"><div class="dbf-name">DB.UpdateProtectionBusiness(id, data, cb)</div><div class="dbf-desc">İşyeri güncelle (admin)</div></div>
+      <div class="dbf"><div class="dbf-name">DB.DeleteProtectionBusiness(id, cb)</div><div class="dbf-desc">İşyeri sil (admin)</div></div>
+      <div class="dbf"><div class="dbf-name">DB.GetProtectionClaim(businessId, cb)</div><div class="dbf-desc">İşyerinin mevcut sahibini getir</div></div>
+      <div class="dbf"><div class="dbf-name">DB.ClaimProtectionBusiness(businessId, gangId, cb)</div><div class="dbf-desc">İşyeri talep et / el değiştir</div></div>
+      <div class="dbf"><div class="dbf-name">DB.GetProtectionRelation(businessId, gangId, cb)</div><div class="dbf-desc">Gang-işyeri Fear & Respect değerlerini getir</div></div>
+      <div class="dbf"><div class="dbf-name">DB.UpdateProtectionRelation(businessId, gangId, fear, respect, cb)</div><div class="dbf-desc">Fear/Respect güncelle</div></div>
+      <div class="dbf"><div class="dbf-name">DB.GetCooldown(businessId, gangId, cb)</div><div class="dbf-desc">last_collected ile TIMESTAMPDIFF — cooldown kaldı mı?</div></div>
+      <div class="dbf"><div class="dbf-name">DB.UpdateLastCollected(businessId, gangId, cb)</div><div class="dbf-desc">Haraç toplandı, timestamp güncelle</div></div>
+      <div class="dbf"><div class="dbf-name">DB.LogProtectionEvent(data, cb)</div><div class="dbf-desc">Geçmiş tablosuna log yaz</div></div>
+      <div class="dbf"><div class="dbf-name">DB.GetProtectionHistory(businessId, gangId, limit, cb)</div><div class="dbf-desc">Etkileşim geçmişini getir</div></div>
+      <div class="dbf"><div class="dbf-name">DB.GetGangProtectionStats(gangId, cb)</div><div class="dbf-desc">Gang'ın tüm işyeri istatistikleri</div></div>
+      <div class="dbf"><div class="dbf-name">DB.GetAllGangClaims(gangId, cb)</div><div class="dbf-desc">Gang'ın kontrol ettiği işyerleri</div></div>
+    </div>
+  </section>
+
+  <!-- HESAPLAMA -->
+  <section id="hesaplama">
+    <div class="eyebrow">02 — Haraç Formülü</div>
+    <h2>CalculateProtection<br><em>Amount()</em></h2>
+    <p class="lead">Haraç miktarı sabit değil — işyeri tipine, ilişki durumuna ve bölge reputasyonuna göre dinamik olarak hesaplanır.</p>
+
+    <div class="formula" style="margin-bottom:28px">
+      <div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:8px;letter-spacing:.05em">FORMÜL</div>
+      <div class="formula-eq">haraç <span class="fe-op">=</span> <span class="fe-hl">base_value</span> <span class="fe-op">×</span> <span class="fe-hl">tipÇarpanı</span> <span class="fe-op">×</span> <span class="fe-hl">ilişkiÇarpanı</span> <span class="fe-op">×</span> <span class="fe-hl">reputasyonBonusu</span></div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.8">
+        <strong style="color:var(--text)">Örnek:</strong> Restoran ($500 base), Fear=60, Respect=70, ZoneRep=50<br>
+        <code style="color:var(--accent);font-size:12px">500 × 1.5 × max(0.7, (70/100×0.5) + 1.0) × (1.0 + 50/200)</code><br>
+        <code style="color:var(--accent);font-size:12px">= 500 × 1.5 × 1.35 × 1.25 = <strong style="color:var(--yellow)">$1265</strong></code>
+      </div>
+    </div>
+
+    <div class="g2" style="margin-bottom:24px">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">İşyeri Tipi Çarpanı</div>
+        <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
+          <table class="tbl">
+            <thead><tr><th>Tip</th><th>Çarpan</th></tr></thead>
+            <tbody>
+              <tr><td>shop</td><td><div class="rel-bar-row"><div class="rel-bar-track"><div class="rel-bar-fill rb-respect" style="width:40%"></div></div><span style="color:var(--text)">1.0×</span></div></td></tr>
+              <tr><td>restaurant</td><td><div class="rel-bar-row"><div class="rel-bar-track"><div class="rel-bar-fill rb-respect" style="width:60%"></div></div><span style="color:var(--text)">1.5×</span></div></td></tr>
+              <tr><td>garage</td><td><div class="rel-bar-row"><div class="rel-bar-track"><div class="rel-bar-fill rb-respect" style="width:72%"></div></div><span style="color:var(--text)">1.8×</span></div></td></tr>
+              <tr><td>warehouse</td><td><div class="rel-bar-row"><div class="rel-bar-track"><div class="rel-bar-fill rb-respect" style="width:80%"></div></div><span style="color:var(--text)">2.0×</span></div></td></tr>
+              <tr><td>nightclub</td><td><div class="rel-bar-row"><div class="rel-bar-track"><div class="rel-bar-fill rb-respect" style="width:100%"></div></div><span style="color:var(--accent)">2.5×</span></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">İlişki & Reputasyon Çarpanı</div>
+        <div class="hbox hb-b">
+          <div class="hbox-title">İlişki Çarpanı (0.7 – 1.2×)</div>
+          <p><code style="color:var(--blue)">max(0.7, (respect/100 × 0.5) + (fear &gt; 50 ? 1.0 : 0.7))</code><br><br>
+          Fear düşük + Respect düşük → <strong style="color:var(--red)">0.7×</strong> (minimum, NPC direnir)<br>
+          Fear yüksek + Respect yüksek → <strong style="color:var(--accent)">1.2×</strong> (maximum, NPC sadık)</p>
+        </div>
+        <div class="hbox hb-g" style="margin-top:8px">
+          <div class="hbox-title">Reputasyon Bonusu (1.0 – 1.5×)</div>
+          <p><code style="color:var(--accent)">1.0 + zoneReputation / 200</code><br><br>
+          0 rep → <strong style="color:var(--text)">1.0×</strong> (bonus yok)<br>
+          100 rep → <strong style="color:var(--accent)">1.5×</strong> (+%50 bonus)</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NPC DAVRANIŞI -->
+  <section id="davranis">
+    <div class="eyebrow">03 — NPC Davranış Sistemi</div>
+    <h2>Fear × Respect<br><em>= 4 Davranış</em></h2>
+    <p class="lead">GetNpcBehavior() fonksiyonu Fear ve Respect kombinasyonuna göre NPC'nin nasıl tepki vereceğini belirler.</p>
+
+    <div class="behavior-grid">
+
+      <!-- LOYAL -->
+      <div class="bcard bc-loyal">
+        <div class="bc-label">😊 Loyal — Sadık</div>
+        <div class="bc-cond">
+          <span class="tag tg">Fear ≥ 50</span>
+          <span class="tag tg">Respect ≥ 50</span>
+        </div>
+        <div class="bc-title">Hemen Öder</div>
+        <div class="bc-desc">Tam miktarı öder ve <strong style="color:var(--accent)">%10 bonus</strong> ekler. Progress bar gösterilir (3 saniye). Hiç sorun çıkarmaz.</div>
+        <div style="margin-top:14px">
+          <div class="rel-bar-row"><div class="rel-bar-label" style="font-size:10px;color:var(--accent)">Fear</div><div class="rel-bar-track"><div class="rel-bar-fill rb-fear" style="width:75%"></div></div><span style="font-size:11px;color:var(--text2)">≥50</span></div>
+          <div class="rel-bar-row"><div class="rel-bar-label" style="font-size:10px;color:var(--blue)">Respect</div><div class="rel-bar-track"><div class="rel-bar-fill rb-respect" style="width:75%"></div></div><span style="font-size:11px;color:var(--text2)">≥50</span></div>
+        </div>
+        <div class="bc-quote">"Patron, buyrun bu ayın ödemesi!"</div>
+      </div>
+
+      <!-- SCARED -->
+      <div class="bcard bc-scared">
+        <div class="bc-label">😰 Scared — Korkmuş</div>
+        <div class="bc-cond">
+          <span class="tag tg">Fear ≥ 50</span>
+          <span class="tag tr">Respect &lt; 50</span>
+        </div>
+        <div class="bc-title">Öder Ama...</div>
+        <div class="bc-desc">Tam miktarı öder. Ancak <strong style="color:var(--yellow)">%30 ihtimalle polisi arar</strong>. Cower animasyonu (2.5 saniye), sonra para verir.</div>
+        <div style="margin-top:14px">
+          <div class="rel-bar-row"><div class="rel-bar-label" style="font-size:10px;color:var(--accent)">Fear</div><div class="rel-bar-track"><div class="rel-bar-fill rb-fear" style="width:75%"></div></div><span style="font-size:11px;color:var(--text2)">≥50</span></div>
+          <div class="rel-bar-row"><div class="rel-bar-label" style="font-size:10px;color:var(--blue)">Respect</div><div class="rel-bar-track"><div class="rel-bar-fill rb-respect" style="width:25%"></div></div><span style="font-size:11px;color:var(--text2)">&lt;50</span></div>
+        </div>
+        <div class="bc-quote">"T-tamam... yapma, al parayı."</div>
+      </div>
+
+      <!-- BARGAIN -->
+      <div class="bcard bc-bargain">
+        <div class="bc-label">🤝 Bargain — Pazarlık</div>
+        <div class="bc-cond">
+          <span class="tag tr">Fear &lt; 50</span>
+          <span class="tag tg">Respect ≥ 50</span>
+        </div>
+        <div class="bc-title">İndirim İster</div>
+        <div class="bc-desc">Normal miktarın <strong style="color:var(--blue)">%70–90'ını</strong> öner. NUI diyaloğu açılır: Kabul Et / Reddet / Tehdit Et seçenekleri.</div>
+        <div style="margin-top:14px">
+          <div class="rel-bar-row"><div class="rel-bar-label" style="font-size:10px;color:var(--accent)">Fear</div><div class="rel-bar-track"><div class="rel-bar-fill rb-fear" style="width:25%"></div></div><span style="font-size:11px;color:var(--text2)">&lt;50</span></div>
+          <div class="rel-bar-row"><div class="rel-bar-label" style="font-size:10px;color:var(--blue)">Respect</div><div class="rel-bar-track"><div class="rel-bar-fill rb-respect" style="width:75%"></div></div><span style="font-size:11px;color:var(--text2)">≥50</span></div>
+        </div>
+        <div class="bc-quote">"Bu ay işler kötü, biraz indirim yapalım?"</div>
+      </div>
+
+      <!-- RESIST -->
+      <div class="bcard bc-resist">
+        <div class="bc-label">💢 Resist — Direniş</div>
+        <div class="bc-cond">
+          <span class="tag tr">Fear &lt; 50</span>
+          <span class="tag tr">Respect &lt; 50</span>
+        </div>
+        <div class="bc-title">Adamlarını Çağırır</div>
+        <div class="bc-desc">Ödemeyi reddeder. Silahsız veya silahlı adamlar spawn olur. Kavga başlar — kazanırsan %70 alırsın.</div>
+        <div style="margin-top:14px">
+          <div class="rel-bar-row"><div class="rel-bar-label" style="font-size:10px;color:var(--accent)">Fear</div><div class="rel-bar-track"><div class="rel-bar-fill rb-fear" style="width:10%"></div></div><span style="font-size:11px;color:var(--text2)">&lt;50</span></div>
+          <div class="rel-bar-row"><div class="rel-bar-label" style="font-size:10px;color:var(--blue)">Respect</div><div class="rel-bar-track"><div class="rel-bar-fill rb-respect" style="width:10%"></div></div><span style="font-size:11px;color:var(--text2)">&lt;50</span></div>
+        </div>
+        <div class="bc-quote">"Sen kimsin ya? Beyler, gelin buraya!"</div>
+      </div>
+
+    </div>
+
+    <div class="hbox hb-g" style="margin-top:20px">
+      <div class="hbox-title">Fear & Respect Değişim Tablosu</div>
+      <p>
+        Haraç toplandı: Fear <strong style="color:var(--text)">+0</strong>, Respect <strong style="color:var(--accent)">+3</strong> &nbsp;|&nbsp;
+        Kavga kazandı: Fear <strong style="color:var(--red)">+20</strong>, Respect <strong style="color:var(--text)">−8</strong> &nbsp;|&nbsp;
+        Kavga kaybetti: Fear <strong style="color:var(--text)">−20</strong>, Respect <strong style="color:var(--text)">0</strong> &nbsp;|&nbsp;
+        Pazarlık kabul: Respect <strong style="color:var(--accent)">+5</strong> &nbsp;|&nbsp;
+        Pazarlık red/tehdit: Fear <strong style="color:var(--red)">+5</strong>, Respect <strong style="color:var(--text)">−5</strong>
+      </p>
+    </div>
+  </section>
+
+  <!-- KAVGA -->
+  <section id="kavga">
+    <div class="eyebrow">04 — Direniş & Kavga Sistemi</div>
+    <h2>Resist Davranışı<br><em>Detaylı Mekanik</em></h2>
+    <p class="lead">NPC direniş gösterdiğinde Fear seviyesine göre silahlı veya yumruklu adamlar spawn olur ve kavga izleme thread'i başlar.</p>
+
+    <div class="ss g4" style="grid-template-columns:repeat(4,1fr);margin-bottom:32px">
+      <div class="sc"><div class="sv" style="color:var(--red)">≤20</div><div class="sl">Fear → Silahlı NPC</div></div>
+      <div class="sc"><div class="sv" style="color:var(--yellow)">21–50</div><div class="sl">Fear → Yumruklu NPC</div></div>
+      <div class="sc"><div class="sv" style="color:var(--accent)">3–5</div><div class="sl">Silahsız NPC sayısı</div></div>
+      <div class="sc"><div class="sv" style="color:var(--blue)">2s</div><div class="sl">Combat monitor aralığı</div></div>
+    </div>
+
+    <div class="g2" style="margin-bottom:24px">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">NPC Spawn Mekaniği</div>
+        <div class="fl">
+          <div class="fi"><div class="fn">1</div><div class="fb"><div class="ft2">Model seç</div><div class="fd">THUG_MODELS havuzundan rastgele — salvagoon, mexgoon, ballaeast, azteca, famfor, lost</div></div></div>
+          <div class="fi"><div class="fn">2</div><div class="fb"><div class="ft2">Konumlandır</div><div class="fd">İşyerinin 9–15 metre etrafında rastgele konumlarda spawn edilir</div></div></div>
+          <div class="fi"><div class="fn">3</div><div class="fb"><div class="ft2">Davranış ayarla</div><div class="fd">SetBlockingOfNonTemporaryEvents, SetPedFleeAttributes(false) — kaçmaz, tepki vermez</div></div></div>
+          <div class="fi"><div class="fn">4</div><div class="fb"><div class="ft2">Silah ver (fear ≤ 20)</div><div class="fd">GiveWeaponToPed WEAPON_PISTOL + ammo</div></div></div>
+          <div class="fi"><div class="fn">5</div><div class="fb"><div class="ft2">Saldır</div><div class="fd">TaskCombatPed ile oyuncuyu hedeflerler</div></div></div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">StartCombatMonitor — Her 2 Saniyede</div>
+        <div class="cl">
+          <div class="ci-item">
+            <div class="cii ci-r">?</div>
+            <div>
+              <div class="ct"><strong>Oyuncu öldü mü?</strong></div>
+              <div class="csub">fightResult won=false → NPC'ler temizlenir, Fear -20</div>
+            </div>
+          </div>
+          <div class="ci-item">
+            <div class="cii ci-g">?</div>
+            <div>
+              <div class="ct"><strong>Tüm düşman NPC'ler öldü mü?</strong></div>
+              <div class="csub">fightResult won=true → Fear +20, Respect -8, teslim miktarı hesaplanır</div>
+            </div>
+          </div>
+          <div class="ci-item">
+            <div class="cii ci-b">?</div>
+            <div>
+              <div class="ct"><strong>NPC hedefini kaybetti mi?</strong></div>
+              <div class="csub">60m içindeyse TaskCombatPed ile tekrar agro edilir</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hbox hb-g" style="margin-top:12px">
+          <div class="hbox-title">Kavga Sonuçları</div>
+          <p>
+            <strong style="color:var(--accent)">Kazanırsan:</strong> Normalin %70'i alınır. NPC teslim olma diyaloğu.<br>
+            <strong style="color:var(--red)">Kaybedersen:</strong> Para alınmaz. NPC dalga geçer. Fear -20.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAZARLIK -->
+  <section id="pazarlik">
+    <div class="eyebrow">05 — Pazarlık Sistemi</div>
+    <h2>Bargain<br><em>Diyalog Akışı</em></h2>
+    <p class="lead">NPC bargain davranışı gösterdiğinde oyuncuya 3 seçenek sunan NUI diyaloğu açılır. Her seçimin Fear & Respect üzerinde farklı etkisi var.</p>
+
+    <div class="g2">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">3 Seçenek</div>
+        <div class="cl">
+          <div class="ci-item" style="background:rgba(48,209,88,.05);border-color:rgba(48,209,88,.15)">
+            <div class="cii ci-g">✓</div>
+            <div>
+              <div class="ct"><strong style="color:var(--accent)">Kabul Et</strong></div>
+              <div class="csub">İndirimli miktarı al (örn. $800 yerine $620). Respect <strong>+5</strong>. Uzlaşma saygı artırır.</div>
+            </div>
+          </div>
+          <div class="ci-item" style="background:rgba(255,69,58,.05);border-color:rgba(255,69,58,.15)">
+            <div class="cii ci-r">✗</div>
+            <div>
+              <div class="ct"><strong style="color:var(--red)">Reddet</strong></div>
+              <div class="csub">Payi almaz, döner. Fear <strong>+5</strong>, Respect <strong>-5</strong>. İlişki kötüleşir.</div>
+            </div>
+          </div>
+          <div class="ci-item" style="background:rgba(255,214,10,.05);border-color:rgba(255,214,10,.15)">
+            <div class="cii ci-y">⚡</div>
+            <div>
+              <div class="ct"><strong style="color:var(--yellow)">Tehdit Et</strong></div>
+              <div class="csub">Escalation — NPC bir sonraki seferde daha korkabilir. Fear <strong>+5</strong>, Respect <strong>-5</strong>.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Teknik Akış</div>
+        <div class="fl">
+          <div class="fi"><div class="fn">1</div><div class="fb"><div class="ft2">NUI'ye diyalog gönder</div><div class="fd">Mesaj + 3 seçenek + teklif miktarı (%70–90 arası)</div></div></div>
+          <div class="fi"><div class="fn">2</div><div class="fb"><div class="ft2">Oyuncu seçim yapar</div><div class="fd"><code style="color:var(--blue);font-size:12px">RegisterNUICallback('protection_bargain_choice')</code></div></div></div>
+          <div class="fi"><div class="fn">3</div><div class="fb"><div class="ft2">Server'a bargainResponse</div><div class="fd">Seçim ve miktar sunucuya iletilir</div></div></div>
+          <div class="fi"><div class="fn">4</div><div class="fb"><div class="ft2">Fear/Respect güncelle</div><div class="fd">DB güncellenir, log yazılır, client'a sonuç bildirilir</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POLİS -->
+  <section id="polis">
+    <div class="eyebrow">06 — Polis İhbar Mekaniği</div>
+    <h2>İki Durumda<br><em>Polis Çağrısı</em></h2>
+    <p class="lead">NPC'ler belirli koşullarda polisi arayabilir. Şans yüzdesi davranışa göre değişir ve gecikme gerçekçilik katar.</p>
+
+    <div class="g2" style="margin-bottom:24px">
+      <div class="pb">
+        <div class="pbh"><div class="pbicon">😰</div><div class="pbtitle">Scared Davranışında</div><div class="pbbadge" style="color:var(--yellow)">%30 şans</div></div>
+        <div class="pbb">
+          <div class="cl">
+            <div class="ci-item"><div class="cii ci-y">1</div><div><div class="ct">Fear ≥ 50, Respect &lt; 50 (scared)</div></div></div>
+            <div class="ci-item"><div class="cii ci-y">2</div><div><div class="ct">%30 şansla ihbar tetiklenir</div></div></div>
+            <div class="ci-item"><div class="cii ci-y">3</div><div><div class="ct">15–45 saniye gecikmeli</div><div class="csub">SetTimeout ile gerçekçi gecikme</div></div></div>
+            <div class="ci-item"><div class="cii ci-y">4</div><div><div class="ct">Oyuncuya bildirim</div><div class="csub">"İşyeri sahibi polisi aradı!"</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pb">
+        <div class="pbh"><div class="pbicon">💢</div><div class="pbtitle">Kavga Sırasında</div><div class="pbbadge" style="color:var(--red)">%50 şans</div></div>
+        <div class="pbb">
+          <div class="cl">
+            <div class="ci-item"><div class="cii ci-r">1</div><div><div class="ct">Resist davranışı → Kavga başlar</div></div></div>
+            <div class="ci-item"><div class="cii ci-r">2</div><div><div class="ct">%50 şansla ihbar tetiklenir</div></div></div>
+            <div class="ci-item"><div class="cii ci-r">3</div><div><div class="ct">10–30 saniye gecikmeli</div></div></div>
+            <div class="ci-item"><div class="cii ci-r">4</div><div><div class="ct">Haritada konum blip</div><div class="csub">vorp_illegal:client:protection:policeAlert — 120 saniyelik blip</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="schema">
+      <div class="sh"><div class="dot" style="background:var(--red)"></div>PoliceReport Config</div>
+      <div class="sr"><div class="sf">Enabled</div><div class="sd">true/false — Tüm polis ihbar mekanizmasını aç/kapat</div></div>
+      <div class="sr"><div class="sf">ChanceHighFearLowRespect</div><div class="sd">30 — Scared davranışında ihbar şansı (%)</div></div>
+      <div class="sr"><div class="sf">ChanceDuringFight</div><div class="sd">50 — Kavga sırasında ihbar şansı (%)</div></div>
+    </div>
+  </section>
+
+  <!-- CLIENT -->
+  <section id="client">
+    <div class="eyebrow">07 — Client Mantığı</div>
+    <h2>NPC Spawn &<br><em>Proximity Sistemi</em></h2>
+    <p class="lead">Her 2 saniyede çalışan proximity thread, oyuncunun mesafesine göre NPC'leri otomatik spawn eder ve temizler.</p>
+
+    <div class="ss g4" style="grid-template-columns:repeat(4,1fr);margin-bottom:32px">
+      <div class="sc"><div class="sv" style="color:var(--accent)">50m</div><div class="sl">NPC spawn mesafesi</div></div>
+      <div class="sc"><div class="sv" style="color:var(--red)">80m</div><div class="sl">NPC temizleme mesafesi</div></div>
+      <div class="sc"><div class="sv" style="color:var(--blue)">3m</div><div class="sl">Etkileşim mesafesi</div></div>
+      <div class="sc"><div class="sv" style="color:var(--yellow)">2s</div><div class="sl">Proximity kontrol aralığı</div></div>
+    </div>
+
+    <div class="g2" style="margin-bottom:24px">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">NPC Özellikleri</div>
+        <div class="cl">
+          <div class="ci-item"><div class="cii ci-b">🏗️</div><div><div class="ct"><strong>CreatePed(4, hash, ...)</strong></div><div class="csub">Tip 4 = civilian. false, true = network olmayan, freeze edilebilir.</div></div></div>
+          <div class="ci-item"><div class="cii ci-g">🔒</div><div><div class="ct"><strong>SetEntityInvincible(true)</strong></div><div class="csub">Öldürülemez — kavga başlayınca kaldırılır.</div></div></div>
+          <div class="ci-item"><div class="cii ci-g">🧊</div><div><div class="ct"><strong>FreezeEntityPosition(true)</strong></div><div class="csub">Hareket etmez — kavgada kaldırılır.</div></div></div>
+          <div class="ci-item"><div class="cii ci-b">🚶</div><div><div class="ct"><strong>TaskStartScenarioInPlace</strong></div><div class="csub">WORLD_HUMAN_STAND_IMPATIENT — dükkan sahibi idle animasyonu.</div></div></div>
+          <div class="ci-item"><div class="cii ci-y">🚫</div><div><div class="ct"><strong>SetPedFleeAttributes(0, false)</strong></div><div class="csub">Kaçmaz. SetBlockingOfNonTemporaryEvents — olaylara tepki vermez.</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Etkileşim Akışı</div>
+        <div class="fl">
+          <div class="fi"><div class="fn">1</div><div class="fb"><div class="ft2">Server kontrolü</div><div class="fd">Gang, territory, claim, cooldown doğrulanır</div></div></div>
+          <div class="fi"><div class="fn">2</div><div class="fb"><div class="ft2">TurnNpcToPlayer</div><div class="fd">NPC dondurmadan çıkar → oyuncuya döner → 1.5 saniye → tekrar dondurur</div></div></div>
+          <div class="fi"><div class="fn">3</div><div class="fb"><div class="ft2">Davranışa göre tepki</div><div class="fd">Loyal → progress bar 3s | Scared → cower anim 2.5s | Bargain → NUI | Resist → kavga</div></div></div>
+          <div class="fi"><div class="fn">4</div><div class="fb"><div class="ft2">confirmCollection</div><div class="fd">Bridge.AddMoney + DB güncelle + cache invalidate + log yaz</div></div></div>
+        </div>
+        <div class="hbox hb-y" style="margin-top:8px">
+          <div class="hbox-title">Cooldown</div>
+          <p>2 saat, <strong>çete bazlı</strong> (oyuncu bazlı değil). MySQL TIMESTAMPDIFF(MINUTE) ile kontrol. Cooldown bitmemişse NPC baş sallayıp reddeder.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GÜVENLİK -->
+  <section id="guvenlik">
+    <div class="eyebrow">08 — Güvenlik Önlemleri</div>
+    <h2>Exploitation<br><em>Koruması</em></h2>
+    <p class="lead">Rate limiting, miktar tavanı, pcall wrapping ve admin doğrulaması — dört katmanlı güvenlik.</p>
+
+    <div class="g2">
+      <div class="cl">
+        <div class="ci-item">
+          <div class="cii ci-r">🛡️</div>
+          <div>
+            <div class="ct"><strong>Rate Limiting</strong></div>
+            <div class="csub"><code style="font-size:11px;color:var(--blue)">Security.CheckRateLimit(src, 'protection_*', 5, 30)</code><br>30 saniyede maksimum 5 istek. Aşılırsa event reddedilir.</div>
+          </div>
+        </div>
+        <div class="ci-item">
+          <div class="cii ci-y">💰</div>
+          <div>
+            <div class="ct"><strong>Amount Cap</strong></div>
+            <div class="csub"><code style="font-size:11px;color:var(--blue)">maxAmount = base_value × 5</code><br>confirmCollection'da miktar tavanı — exploitation önlemi.</div>
+          </div>
+        </div>
+        <div class="ci-item">
+          <div class="cii ci-b">🔒</div>
+          <div>
+            <div class="ct"><strong>pcall Wrapping</strong></div>
+            <div class="csub">Territory export çağrıları ve JSON işlemleri pcall ile sarılı. Hata halinde crash olmaz.</div>
+          </div>
+        </div>
+      </div>
+      <div class="cl">
+        <div class="ci-item">
+          <div class="cii ci-p">👑</div>
+          <div>
+            <div class="ct"><strong>Admin Doğrulama</strong></div>
+            <div class="csub">Tüm admin eventlerinde <code style="font-size:11px;color:var(--blue)">IsPlayerAdmin(src)</code> — Config.Admins + Bridge.HasPermission çift kontrol.</div>
+          </div>
+        </div>
+        <div class="ci-item">
+          <div class="cii ci-g">✓</div>
+          <div>
+            <div class="ct"><strong>Claim Validation</strong></div>
+            <div class="csub">confirmCollection'da hem işyeri hem claim tekrar doğrulanır — sunucu tarafında kesin kontrol.</div>
+          </div>
+        </div>
+        <div class="ci-item">
+          <div class="cii ci-o">📊</div>
+          <div>
+            <div class="ct"><strong>Cache Invalidation</strong></div>
+            <div class="csub">Haraç sonrası ilgili cache temizlenir — stale data önlenir.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAM AKIŞ -->
+  <section id="akis">
+    <div class="eyebrow">09 — Uçtan Uca Akış</div>
+    <h2>Haraçtan<br><em>Ödüle</em></h2>
+    <p class="lead">Target zone tıklamaktan paranın hesaba geçmesine kadar her adım.</p>
+
+    <!-- Haraç Toplama -->
+    <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:14px">Haraç Toplama Akışı</div>
+    <div class="pipeline" style="margin-bottom:28px">
+      <div class="ps">
+        <div class="pl"><div class="pl-layer" style="color:var(--blue)">Client</div><div class="pl-file">protection.lua</div></div>
+        <div class="parrow">↓</div>
+        <div class="pr">Oyuncu target zone'a girer → <strong>[E] Haraç Topla</strong> → <code style="color:var(--blue);font-size:12px">protection:collect</code> event</div>
+      </div>
+      <div class="ps">
+        <div class="pl"><div class="pl-layer" style="color:var(--accent)">Server</div><div class="pl-file">protection.lua</div></div>
+        <div class="parrow">↓</div>
+        <div class="pr">Gang kontrolü → territory kontrolü → claim kontrolü → cooldown kontrolü → Fear/Respect'e göre davranış belirle</div>
+      </div>
+      <div class="ps">
+        <div class="pl"><div class="pl-layer" style="color:var(--accent)">Server → Client</div><div class="pl-file">npcResponse</div></div>
+        <div class="parrow">↓</div>
+        <div class="pr"><strong>behavior</strong>, <strong>amount</strong>, <strong>dialogueKey</strong> client'a gönderilir</div>
+      </div>
+      <div class="ps">
+        <div class="pl"><div class="pl-layer" style="color:var(--blue)">Client</div><div class="pl-file">NPC Tepki</div></div>
+        <div class="parrow">↓</div>
+        <div class="pr">
+          <span class="tag tg">loyal</span> Progress bar 3s →&nbsp;
+          <span class="tag ty">scared</span> Cower anim 2.5s →&nbsp;
+          <span class="tag tb">bargain</span> NUI diyalog →&nbsp;
+          <span class="tag tr">resist</span> Kavga başlar
+        </div>
+      </div>
+      <div class="ps">
+        <div class="pl"><div class="pl-layer" style="color:var(--blue)">Client → Server</div><div class="pl-file">confirmCollection</div></div>
+        <div class="parrow">↓</div>
+        <div class="pr">businessId + amount sunucuya gönderilir</div>
+      </div>
+      <div class="ps" style="background:rgba(48,209,88,.03)">
+        <div class="pl"><div class="pl-layer" style="color:var(--accent)">Server</div><div class="pl-file">Sonuç</div></div>
+        <div class="parrow"></div>
+        <div class="pr" style="color:var(--accent)"><strong>Bridge.AddMoney(reward)</strong> → DB güncelle (Fear/Respect, last_collected) → Cache temizle → History log yaz → Başarı bildirimi</div>
+      </div>
+    </div>
+
+    <!-- Kavga Akışı -->
+    <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:14px">Kavga (Resist) Akışı</div>
+    <div class="pipeline" style="margin-bottom:32px">
+      <div class="ps">
+        <div class="pl"><div class="pl-layer" style="color:var(--accent)">Server</div><div class="pl-file">protection.lua</div></div>
+        <div class="parrow">↓</div>
+        <div class="pr">behavior = 'resist' → GetResistanceConfig(fear) → Client'a resistConfig gönder (NPC sayısı, silah tipi)</div>
+      </div>
+      <div class="ps">
+        <div class="pl"><div class="pl-layer" style="color:var(--blue)">Client</div><div class="pl-file">SpawnResistanceNpcs</div></div>
+        <div class="parrow">↓</div>
+        <div class="pr">3–5 NPC spawn (9–15m dağılım) → silah ver (fear≤20) → TaskCombatPed → StartCombatMonitor</div>
+      </div>
+      <div class="ps">
+        <div class="pl"><div class="pl-layer" style="color:var(--blue)">Client Thread</div><div class="pl-file">Her 2 saniye</div></div>
+        <div class="parrow">↓</div>
+        <div class="pr">Tüm NPC'ler öldü? → <span class="tag tg">won=true</span> &nbsp;|&nbsp; Oyuncu öldü? → <span class="tag tr">won=false</span> &nbsp;|&nbsp; Agro kayıp → TaskCombatPed tekrar</div>
+      </div>
+      <div class="ps" style="background:rgba(48,209,88,.03)">
+        <div class="pl"><div class="pl-layer" style="color:var(--accent)">Kazanırsa</div><div class="pl-file">Server</div></div>
+        <div class="parrow"></div>
+        <div class="pr" style="color:var(--accent)">Fear +20, Respect -8 → Teslim miktarı %70 → fightWon event → Client progress bar → confirmCollection</div>
+      </div>
+      <div class="ps" style="background:rgba(255,69,58,.03)">
+        <div class="pl"><div class="pl-layer" style="color:var(--red)">Kaybederse</div><div class="pl-file">Server</div></div>
+        <div class="parrow"></div>
+        <div class="pr" style="color:var(--red)">Fear -20 → fightLost event → Client bildirim → Para alınmaz → NPC'ler temizlenir</div>
+      </div>
+    </div>
+
+    <div class="g3">
+      <div class="oc"><div class="oe">🔄</div><div class="ot"><strong>Dinamik Ekonomi</strong> — Her haraç toplama Fear/Respect'i değiştirir ve sonraki etkileşimi etkiler</div></div>
+      <div class="oc"><div class="oe">🏙️</div><div class="ot"><strong>Canlı Dünya</strong> — NPC'ler proximity'e göre otomatik spawn/despawn, işyeri sahibi animasyonlu bekler</div></div>
+      <div class="oc"><div class="oe">📱</div><div class="ot"><strong>Tablet Entegrasyonu</strong> — Leaflet harita, Fear/Respect barlar, cooldown timer, toplam gelir istatistiği</div></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="ftt">VORP Illegal</div>
+  <div class="fts">Protection (Haraç) Sistemi · Mimari Dökümanı</div>
+</footer>
+
+<script>
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+  },{threshold:.07});
+  document.querySelectorAll('section').forEach(s=>observer.observe(s));
+
+  const sections=document.querySelectorAll('section[id]');
+  const links=document.querySelectorAll('.snav a');
+  window.addEventListener('scroll',()=>{
+    let cur='';
+    sections.forEach(s=>{if(s.offsetTop-80<=scrollY)cur=s.id});
+    links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
+  },{passive:true});
+</script>
+</body>
+</html>

@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VORP Illegal — Territory NPC Sistemi</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #080808;
+  --bg2: #0f0f0f;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.14);
+  --text: #f5f5f7;
+  --text2: rgba(255,255,255,0.55);
+  --text3: rgba(255,255,255,0.3);
+  --accent: #ff453a;
+  --blue: #0a84ff;
+  --green: #30d158;
+  --yellow: #ffd60a;
+  --purple: #bf5af2;
+  --teal: #64d2ff;
+  --orange: #ff9f0a;
+  --r: 12px;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  padding: 120px 24px 80px;
+  overflow: hidden;
+}
+.hero-glow {
+  position: absolute;
+  width: 900px; height: 600px;
+  background: radial-gradient(ellipse, rgba(10,132,255,0.1) 0%, transparent 65%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.hero-glow2 {
+  position: absolute;
+  width: 500px; height: 400px;
+  background: radial-gradient(ellipse, rgba(48,209,88,0.07) 0%, transparent 65%);
+  bottom: 20%; left: 15%;
+  pointer-events: none;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(10,132,255,0.12);
+  border: 1px solid rgba(10,132,255,0.25);
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 32px;
+  animation: fadeUp 0.8s ease both;
+}
+.pill-dot {
+  width: 6px; height: 6px;
+  background: var(--blue);
+  border-radius: 50%;
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(48px, 8.5vw, 104px);
+  font-weight: 400;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+h1 em { font-style: italic; color: var(--blue); }
+
+.hero-sub {
+  margin-top: 24px;
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--text2);
+  max-width: 560px;
+  line-height: 1.7;
+  animation: fadeUp 0.8s 0.2s ease both;
+}
+
+/* File change table */
+.change-strip {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 36px;
+  animation: fadeUp 0.8s 0.3s ease both;
+}
+.change-chip {
+  font-size: 11px;
+  font-weight: 500;
+  font-family: 'Courier New', monospace;
+  padding: 5px 12px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  color: var(--text2);
+}
+.change-chip.new { background: rgba(48,209,88,0.08); border-color: rgba(48,209,88,0.2); color: var(--green); }
+.change-chip.mod { background: rgba(10,132,255,0.08); border-color: rgba(10,132,255,0.2); color: var(--blue); }
+
+.hero-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 36px;
+  animation: fadeUp 0.8s 0.35s ease both;
+}
+.hero-nav a {
+  color: var(--text2);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 9px 18px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: all 0.2s;
+}
+.hero-nav a:hover { background: var(--surface-hover); border-color: var(--border-strong); color: var(--text); }
+
+.scroll-hint {
+  position: absolute;
+  bottom: 40px; left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text3);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  animation: fadeUp 1s 0.6s ease both;
+}
+.scroll-line { width: 1px; height: 48px; background: linear-gradient(to bottom, var(--border-strong), transparent); animation: scrollPulse 2s infinite; }
+@keyframes scrollPulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── STICKY NAV ── */
+.sticky-nav {
+  position: sticky; top: 0; z-index: 100;
+  padding: 0 40px;
+  background: rgba(8,8,8,0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 0;
+  overflow-x: auto; scrollbar-width: none;
+}
+.sticky-nav::-webkit-scrollbar { display: none; }
+.nav-logo { font-family: 'DM Serif Display', serif; font-size: 16px; color: var(--text); margin-right: 32px; white-space: nowrap; flex-shrink: 0; padding: 16px 0; }
+.nav-logo span { color: var(--blue); }
+.sticky-nav a { color: var(--text3); text-decoration: none; font-size: 13px; font-weight: 500; padding: 18px 14px; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.2s; flex-shrink: 0; }
+.sticky-nav a:hover { color: var(--text); }
+.sticky-nav a.active { color: var(--text); border-bottom-color: var(--blue); }
+
+/* ── LAYOUT ── */
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+@media(max-width:600px){ .wrap{ padding: 0 20px; } }
+
+section { padding: 100px 0 0; opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+section.visible { opacity: 1; transform: none; }
+
+.section-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); margin-bottom: 12px; }
+h2 { font-family: 'DM Serif Display', serif; font-size: clamp(34px, 5vw, 56px); font-weight: 400; letter-spacing: -0.02em; line-height: 1.1; color: var(--text); margin-bottom: 16px; }
+h2 em { font-style: italic; color: var(--text2); }
+.section-lead { font-size: 17px; color: var(--text2); font-weight: 300; max-width: 640px; margin-bottom: 48px; line-height: 1.7; }
+
+/* ── GRID ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; }
+@media(max-width:760px){ .g2,.g3 { grid-template-columns: 1fr; } }
+@media(max-width:600px){ .g4 { grid-template-columns: repeat(2,1fr); } }
+
+/* ── GLASS ── */
+.glass { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); transition: background 0.2s, border-color 0.2s; }
+.glass:hover { background: var(--surface-hover); border-color: var(--border-strong); }
+
+/* ── FILE CHANGE TABLE ── */
+.file-table { width: 100%; border-collapse: collapse; }
+.file-table th { text-align: left; padding: 10px 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+.file-table td { padding: 14px 20px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+.file-table tr:last-child td { border-bottom: none; }
+.file-table tr:hover td { background: rgba(255,255,255,0.02); }
+.file-table td:first-child { font-family: 'Courier New', monospace; font-size: 12px; color: var(--blue); white-space: nowrap; }
+.file-table td:last-child { color: var(--text2); }
+.ftag { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-right: 8px; letter-spacing: 0.06em; }
+.ftag-new { background: rgba(48,209,88,0.12); color: var(--green); border: 1px solid rgba(48,209,88,0.2); }
+.ftag-mod { background: rgba(10,132,255,0.1); color: var(--blue); border: 1px solid rgba(10,132,255,0.2); }
+
+/* ── STAT STRIP ── */
+.stat-strip { display: grid; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-bottom: 48px; }
+.stat-cell { background: var(--bg2); padding: 24px 20px; transition: background 0.2s; }
+.stat-cell:hover { background: var(--surface); }
+.stat-val { font-family: 'DM Serif Display', serif; font-size: 32px; line-height: 1; margin-bottom: 6px; }
+.stat-label { font-size: 13px; color: var(--text2); font-weight: 300; }
+
+/* ── CODE BLOCK ── */
+.code {
+  background: #0c0c10;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.9;
+  overflow-x: auto;
+  white-space: pre;
+  color: rgba(255,255,255,0.5);
+  margin: 10px 0;
+}
+.ck  { color: #ff6b6b; }   /* keyword */
+.cv  { color: var(--blue); }  /* variable / function */
+.cs  { color: var(--green); } /* string */
+.cn  { color: var(--yellow); }/* number */
+.cc  { color: rgba(255,255,255,0.2); font-style: italic; } /* comment */
+
+/* ── PROCESS BOARD ── */
+.pb { border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.pb-head { display: flex; align-items: center; gap: 14px; padding: 18px 22px; background: rgba(255,255,255,0.03); border-bottom: 1px solid var(--border); }
+.pb-icon { font-size: 20px; }
+.pb-title { font-size: 15px; font-weight: 600; color: var(--text); }
+.pb-badge { margin-left: auto; font-size: 11px; color: var(--text3); }
+.pb-body { padding: 20px 22px; }
+
+/* ── CHECK LIST ── */
+.check-list { display: flex; flex-direction: column; gap: 8px; }
+.check-item { display: flex; align-items: flex-start; gap: 12px; padding: 13px 15px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid transparent; transition: all 0.2s; }
+.check-item:hover { border-color: var(--border); }
+.ci { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-top: 1px; }
+.ci-blue   { background: rgba(10,132,255,0.15); color: var(--blue); }
+.ci-green  { background: rgba(48,209,88,0.15); color: var(--green); }
+.ci-yellow { background: rgba(255,214,10,0.15); color: var(--yellow); }
+.ci-purple { background: rgba(191,90,242,0.15); color: var(--purple); }
+.ci-orange { background: rgba(255,159,10,0.15); color: var(--orange); }
+.ct { font-size: 14px; color: var(--text); line-height: 1.5; }
+.cs2 { font-size: 12px; color: var(--text2); margin-top: 3px; }
+
+/* ── FLOW ── */
+.flow-list { display: flex; flex-direction: column; }
+.flow-item { display: flex; gap: 18px; position: relative; }
+.flow-item:not(:last-child)::before { content:''; position:absolute; left:19px; top:44px; bottom:0; width:1px; background:var(--border); }
+.flow-num { width:40px; height:40px; flex-shrink:0; border-radius:50%; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:var(--text2); position:relative; z-index:1; transition:all 0.2s; }
+.flow-item:hover .flow-num { background:rgba(10,132,255,0.12); border-color:rgba(10,132,255,0.4); color:var(--blue); }
+.flow-body { padding: 10px 0 28px; flex: 1; }
+.flow-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+.flow-desc { font-size: 13px; color: var(--text2); line-height: 1.65; }
+
+/* ── SCHEMA CARD ── */
+.schema-card { border-radius: var(--r); overflow: hidden; border: 1px solid var(--border); }
+.schema-header { padding: 14px 18px; background: rgba(255,255,255,0.04); border-bottom: 1px solid var(--border); font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.schema-header .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.schema-row { display:flex; border-bottom:1px solid rgba(255,255,255,0.04); transition:background 0.15s; }
+.schema-row:last-child { border-bottom:none; }
+.schema-row:hover { background:rgba(255,255,255,0.03); }
+.schema-field { width:160px; padding:11px 18px; font-size:12px; font-weight:500; color:var(--blue); font-family:'Courier New',monospace; flex-shrink:0; }
+.schema-desc { padding:11px 18px; font-size:13px; color:var(--text2); flex:1; border-left:1px solid rgba(255,255,255,0.04); }
+
+/* ── TAG ── */
+.tag { display:inline-block; font-size:11px; font-weight:600; letter-spacing:0.06em; padding:2px 9px; border-radius:5px; margin:2px; }
+.tg { background:rgba(48,209,88,0.1); color:var(--green); border:1px solid rgba(48,209,88,0.2); }
+.tr { background:rgba(255,69,58,0.1); color:#ff453a; border:1px solid rgba(255,69,58,0.2); }
+.tb { background:rgba(10,132,255,0.1); color:var(--blue); border:1px solid rgba(10,132,255,0.2); }
+.ty { background:rgba(255,214,10,0.1); color:var(--yellow); border:1px solid rgba(255,214,10,0.2); }
+.tp { background:rgba(191,90,242,0.1); color:var(--purple); border:1px solid rgba(191,90,242,0.2); }
+
+/* ── PIPELINE FLOW ── */
+.pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+.pipe-step {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.pipe-step:last-child { border-bottom: none; }
+.pipe-step:hover { background: rgba(255,255,255,0.02); }
+.pipe-left {
+  width: 180px;
+  flex-shrink: 0;
+  padding: 16px 20px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+.pipe-layer { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+.pipe-file { font-family: 'Courier New', monospace; font-size: 11px; color: var(--text2); margin-top: 2px; }
+.pipe-right { flex: 1; padding: 16px 20px; font-size: 13px; color: var(--text2); line-height: 1.6; display: flex; align-items: center; }
+.pipe-arrow {
+  width: 32px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text3); font-size: 16px;
+}
+
+/* ── HIGHLIGHT BOX ── */
+.hbox {
+  padding: 18px 22px;
+  border-radius: 10px;
+  border-left: 3px solid;
+  margin: 12px 0;
+}
+.hbox-blue  { background: rgba(10,132,255,0.06); border-color: var(--blue); }
+.hbox-green { background: rgba(48,209,88,0.06); border-color: var(--green); }
+.hbox-yellow{ background: rgba(255,214,10,0.06); border-color: var(--yellow); }
+.hbox-purple{ background: rgba(191,90,242,0.06); border-color: var(--purple); }
+.hbox-title { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+.hbox-blue  .hbox-title { color: var(--blue); }
+.hbox-green .hbox-title { color: var(--green); }
+.hbox-yellow .hbox-title { color: var(--yellow); }
+.hbox-purple .hbox-title { color: var(--purple); }
+.hbox p { font-size: 13px; color: var(--text2); line-height: 1.65; }
+
+/* ── OUTCOME CARD ── */
+.outcome-card { padding: 16px 18px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: flex-start; gap: 12px; transition: all 0.2s; }
+.outcome-card:hover { background: var(--surface-hover); border-color: var(--border-strong); }
+.oc-emoji { font-size: 18px; flex-shrink: 0; }
+.oc-text { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.oc-text strong { color: var(--text); font-weight: 600; }
+
+/* ── FOOTER ── */
+footer { margin-top: 120px; padding: 60px 40px; border-top: 1px solid var(--border); text-align: center; }
+.footer-title { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--text); margin-bottom: 8px; }
+.footer-sub { font-size: 14px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="pill"><div class="pill-dot"></div>vorp_illegal · NPC Spawn Sistemi</div>
+  <h1>Territory<br><em>NPC Models</em></h1>
+  <p class="hero-sub">Gang territory'lerine özel ambient NPC spawn sistemi — veritabanından admin paneline, client thread'e kadar uçtan uca mimari dökümanı.</p>
+
+  <div class="change-strip">
+    <div class="change-chip mod">database.lua</div>
+    <div class="change-chip mod">territory.lua</div>
+    <div class="change-chip mod">bandana.lua</div>
+    <div class="change-chip mod">admin.lua</div>
+    <div class="change-chip new">territory_npcs.lua ✦ YENİ</div>
+    <div class="change-chip mod">fxmanifest.lua</div>
+    <div class="change-chip mod">config.lua</div>
+    <div class="change-chip mod">AdminApp.jsx</div>
+  </div>
+
+  <div class="hero-nav">
+    <a href="#degisiklikler">Değişiklikler</a>
+    <a href="#database">Database</a>
+    <a href="#territory">Territory</a>
+    <a href="#bandana">Bandana</a>
+    <a href="#admin">Admin</a>
+    <a href="#client">Client Thread</a>
+    <a href="#config">Config</a>
+    <a href="#panel">Admin Paneli</a>
+    <a href="#akis">Veri Akışı</a>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    SCROLL
+  </div>
+</div>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <div class="nav-logo">VORP <span>NPC Sistemi</span></div>
+  <a href="#degisiklikler">Değişiklikler</a>
+  <a href="#database">Database</a>
+  <a href="#territory">Territory</a>
+  <a href="#bandana">Bandana</a>
+  <a href="#admin">Admin</a>
+  <a href="#client">Client</a>
+  <a href="#config">Config</a>
+  <a href="#panel">Panel</a>
+  <a href="#akis">Akış</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- DEĞİŞİKLİKLER -->
+  <section id="degisiklikler">
+    <div class="section-eyebrow">00 — Özet</div>
+    <h2>8 Dosya,<br><em>Bir Sistem</em></h2>
+    <p class="section-lead">Gang territory'lerine ait özel NPC'leri yönetmek için eklenen tüm değişiklikler. Mevcut GTA ambient ped sistemine hiç dokunulmadı.</p>
+
+    <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:32px">
+      <table class="file-table">
+        <thead><tr><th>Dosya</th><th>Durum</th><th>Değişiklik</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>server/database.lua</td>
+            <td><span class="ftag ftag-mod">MOD</span></td>
+            <td>EnsureColumns'a npc_models kolonu; GetAllGangNpcModels + UpdateGangNpcModels eklendi</td>
+          </tr>
+          <tr>
+            <td>server/territory.lua</td>
+            <td><span class="ftag ftag-mod">MOD</span></td>
+            <td>GangNpcModels state, sync payload'larına npc_models, Territory_RefreshGangNpcModels global fonksiyonu</td>
+          </tr>
+          <tr>
+            <td>server/bandana.lua</td>
+            <td><span class="ftag ftag-mod">MOD</span></td>
+            <td>satır 519 ve 670 — her iki updateGang handler'ına npcModels kayıt + canlı broadcast</td>
+          </tr>
+          <tr>
+            <td>server/admin.lua</td>
+            <td><span class="ftag ftag-mod">MOD</span></td>
+            <td>Admin_SendData'da npc_models JSON parse eklendi</td>
+          </tr>
+          <tr>
+            <td>client/territory_npcs.lua</td>
+            <td><span class="ftag ftag-new">YENİ</span></td>
+            <td>Periyodik ped spawn thread, zone giriş/çıkış, tüm sync event handler'ları</td>
+          </tr>
+          <tr>
+            <td>fxmanifest.lua</td>
+            <td><span class="ftag ftag-mod">MOD</span></td>
+            <td>territory_npcs.lua client_scripts'e eklendi</td>
+          </tr>
+          <tr>
+            <td>config.lua</td>
+            <td><span class="ftag ftag-mod">MOD</span></td>
+            <td>Config.TerritoryNpcs = { MaxPerTerritory, WanderRadius, CheckIntervalMs }</td>
+          </tr>
+          <tr>
+            <td>web/src/apps/AdminApp.jsx</td>
+            <td><span class="ftag ftag-mod">MOD</span></td>
+            <td>NPC model textarea + save payload + card'da model sayısı gösterimi</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="g3">
+      <div class="glass" style="padding:24px">
+        <div style="font-size:26px;margin-bottom:12px">🎯</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">GTA Ambient Korundu</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6">Oyunun normal ped spawning sistemine hiç dokunulmadı. Sadece ekstra ped'ler ekleniyor.</p>
+      </div>
+      <div class="glass" style="padding:24px">
+        <div style="font-size:26px;margin-bottom:12px">⚡</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Canlı Güncelleme</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6">Admin model değiştirince sunucu scrape/recreate olmadan online tüm client'lara broadcast eder.</p>
+      </div>
+      <div class="glass" style="padding:24px">
+        <div style="font-size:26px;margin-bottom:12px">🔌</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">rs_graff Koşullu</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6">rs_graff aktif değilse sistem tamamen pasif kalır. Sıfır etkisi var.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DATABASE -->
+  <section id="database">
+    <div class="section-eyebrow">01 — server/database.lua</div>
+    <h2>Veritabanı<br><em>Katmanı</em></h2>
+    <p class="section-lead">Sunucu başladığında otomatik çalışan <code style="color:var(--blue);font-size:14px">EnsureColumns()</code> genişletildi ve iki yeni DB fonksiyonu eklendi.</p>
+
+    <div class="g2" style="margin-bottom:24px">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">EnsureColumns() — Otomatik Migrasyon</div>
+        <div class="hbox hbox-blue">
+          <div class="hbox-title">Ne Yapar?</div>
+          <p>Sunucu açılışında <code style="color:var(--blue)">tablet_gangs</code> tablosunda <code style="color:var(--blue)">npc_models</code> kolonu var mı kontrol eder. Yoksa <code style="color:var(--blue)">ALTER TABLE</code> ile ekler. Manuel SQL gerektirmez.</p>
+        </div>
+        <div class="code"><span class="ck">MySQL</span>.query(<span class="cs">"SHOW COLUMNS FROM `tablet_gangs` LIKE 'npc_models'"</span>, ...)
+<span class="cc">-- Kolon yoksa:</span>
+<span class="ck">ALTER TABLE</span> tablet_gangs
+  <span class="ck">ADD COLUMN</span> npc_models <span class="cn">TEXT</span> <span class="ck">DEFAULT NULL</span></div>
+        <div style="margin-top:12px;font-size:13px;color:var(--text2)">Buraya JSON array olarak model adları kaydedilir:</div>
+        <div class="code"><span class="cs">["g_m_y_ballaeast_01", "s_m_y_dealer_01"]</span></div>
+      </div>
+
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">İki Yeni Fonksiyon</div>
+        <div class="schema-card">
+          <div class="schema-header"><div class="dot" style="background:var(--blue)"></div>DB.GetAllGangNpcModels(callback)</div>
+          <div class="schema-row"><div class="schema-field">Kaynak</div><div class="schema-desc">tablet_gangs tablosu, tüm aktif gang'lar</div></div>
+          <div class="schema-row"><div class="schema-field">İşlem</div><div class="schema-desc">JSON string → Lua tablosu parse</div></div>
+          <div class="schema-row"><div class="schema-field">Çıktı</div><div class="schema-desc"><code style="font-size:11px;color:var(--yellow)">{ ["ballas"] = {"model1"}, ["vagos"] = {"model2"} }</code></div></div>
+          <div class="schema-row"><div class="schema-field">Kullanım</div><div class="schema-desc">Sunucu başlangıcı, territory reload</div></div>
+        </div>
+
+        <div class="schema-card" style="margin-top:12px">
+          <div class="schema-header"><div class="dot" style="background:var(--green)"></div>DB.UpdateGangNpcModels(gangId, models, cb)</div>
+          <div class="schema-row"><div class="schema-field">İşlem</div><div class="schema-desc">Lua array → JSON encode → DB UPDATE</div></div>
+          <div class="schema-row"><div class="schema-field">Sorgu</div><div class="schema-desc"><code style="font-size:11px;color:var(--blue)">UPDATE tablet_gangs SET npc_models = ? WHERE gang_id = ?</code></div></div>
+          <div class="schema-row"><div class="schema-field">Tetikleyen</div><div class="schema-desc">Admin panel'den kayıt değişikliği</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TERRITORY -->
+  <section id="territory">
+    <div class="section-eyebrow">02 — server/territory.lua</div>
+    <h2>Territory<br><em>Sunucu Katmanı</em></h2>
+    <p class="section-lead">Dört kritik değişiklik yapıldı: yeni state değişkeni, LoadTerritories sıralaması, sync payload güncelleme ve global refresh fonksiyonu.</p>
+
+    <div class="stat-strip" style="grid-template-columns:repeat(4,1fr)">
+      <div class="stat-cell"><div class="stat-val" style="color:var(--blue)">1</div><div class="stat-label">Yeni state değişkeni</div></div>
+      <div class="stat-cell"><div class="stat-val" style="color:var(--yellow)">2</div><div class="stat-label">Payload güncelleme</div></div>
+      <div class="stat-cell"><div class="stat-val" style="color:var(--green)">1</div><div class="stat-label">Yeni global fonksiyon</div></div>
+      <div class="stat-cell"><div class="stat-val" style="color:var(--purple)">∞</div><div class="stat-label">Canlı güncelleme</div></div>
+    </div>
+
+    <div class="g2" style="margin-bottom:24px">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">2a. Yeni State + LoadTerritories Sıralaması</div>
+        <div class="code"><span class="ck">local</span> <span class="cv">GangNpcModels</span> = {}
+<span class="cc">-- [gang_name] = { "model1", "model2", ... }</span></div>
+        <div class="hbox hbox-yellow" style="margin-top:12px">
+          <div class="hbox-title">Neden Sıra Önemli?</div>
+          <p>Modeller yüklenmeden client'lara sync edilirse <code style="color:var(--yellow)">npc_models = {}</code> (boş) gider. Yeni akışta önce modeller yükleniyor, sonra sync.</p>
+        </div>
+        <div class="flow-list" style="margin-top:16px">
+          <div class="flow-item"><div class="flow-num">1</div><div class="flow-body"><div class="flow-title">Territory'leri yükle</div><div class="flow-desc">DB'den vorp_territories okunur, Territories tablosuna alınır.</div></div></div>
+          <div class="flow-item"><div class="flow-num">2</div><div class="flow-body"><div class="flow-title">DB.GetAllGangNpcModels()</div><div class="flow-desc">Gang model listesi DB'den çekilir, GangNpcModels önbelleğine yazılır.</div></div></div>
+          <div class="flow-item"><div class="flow-num">3</div><div class="flow-body"><div class="flow-title">Client'lara sync gönder</div><div class="flow-desc">Artık payload'lar npc_models içeriyor. Tüm client'lar doğru veriyi alır.</div></div></div>
+          <div class="flow-item"><div class="flow-num">4</div><div class="flow-body"><div class="flow-title">Discovery loop</div><div class="flow-desc">Keşif bilgileri ilgili oyunculara gönderilir.</div></div></div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">2b. GetAllTerritorySyncData() + sync_one Payload</div>
+        <div class="pb">
+          <div class="pb-head"><div class="pb-icon">📦</div><div class="pb-title">Sync Payload'a Eklenen Alan</div></div>
+          <div class="pb-body">
+            <div class="code"><span class="cc">-- ÖNCE:</span>
+{ id, graff_id, gang_name, gang_label,
+  x, y, z, radius }
+
+<span class="cc">-- SONRA:</span>
+{ id, graff_id, gang_name, gang_label,
+  x, y, z, radius,
+  <span class="cv">npc_models</span> = GangNpcModels[t.gang_name] <span class="ck">or</span> {} }</div>
+            <p style="font-size:13px;color:var(--text2);margin-top:12px">Hem <code style="color:var(--blue)">all_data</code> hem <code style="color:var(--blue)">sync_one</code> event'leri bu güncel payload'ı gönderir.</p>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">2c. Territory_RefreshGangNpcModels()</div>
+        <div class="hbox hbox-green">
+          <div class="hbox-title">Global Fonksiyon — Canlı Güncelleme</div>
+          <p>bandana.lua çağırdığı için <code style="color:var(--green)">local</code> değil <code style="color:var(--green)">global</code> olarak tanımlandı. Admin model değiştirince o gang'ın tüm territory'lerine <code style="color:var(--green)">npc_models_updated</code> event'i broadcast edilir.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BANDANA -->
+  <section id="bandana">
+    <div class="section-eyebrow">03 — server/bandana.lua</div>
+    <h2>Gang Güncelleme<br><em>Handler'ları</em></h2>
+    <p class="section-lead">İki ayrı <code style="color:var(--blue);font-size:14px">updateGang</code> handler'ı mevcut (satır 519 ve 670). Her ikisine de aynı blok eklendi.</p>
+
+    <div class="g2" style="margin-bottom:24px">
+      <div>
+        <div class="hbox hbox-yellow">
+          <div class="hbox-title">Neden İki Handler?</div>
+          <p>Kodun farklı zamanlarda yazılmış eski/yeni versiyonu. FiveM'de aynı event iki kez kayıt edilince sadece son kayıt edilen çalışır — ama hangisinin "son" olduğu load order'a göre değişir. İkisi de güncellendi.</p>
+        </div>
+        <div style="margin-top:16px;font-size:14px;font-weight:600;color:var(--text);margin-bottom:10px">Eklenen Blok</div>
+        <div class="code"><span class="ck">if</span> data.npcModels ~= <span class="cn">nil</span> <span class="ck">then</span>
+  <span class="ck">local</span> models = <span class="ck">type</span>(data.npcModels) == <span class="cs">'table'</span>
+                  <span class="ck">and</span> data.npcModels <span class="ck">or</span> {}
+
+  DB.<span class="cv">UpdateGangNpcModels</span>(data.gangId, models, <span class="ck">function</span>()
+    <span class="ck">if</span> Territory_RefreshGangNpcModels <span class="ck">then</span>
+      <span class="cv">Territory_RefreshGangNpcModels</span>(data.gangId, models)
+    <span class="ck">end</span>
+  <span class="ck">end</span>)
+<span class="ck">end</span></div>
+        <div class="hbox hbox-blue" style="margin-top:12px">
+          <div class="hbox-title">Geriye Dönük Uyumluluk</div>
+          <p><code style="color:var(--blue)">data.npcModels ~= nil</code> kontrolü: eski event'ler npcModels göndermezse mevcut modeller silinmez.</p>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Admin'den Servere Akış</div>
+        <div class="flow-list">
+          <div class="flow-item"><div class="flow-num">1</div><div class="flow-body"><div class="flow-title">Admin "Kaydet" tıklar</div><div class="flow-desc"><code style="font-size:12px;color:var(--blue)">fetchNui('updateGang', { ..., npcModels: ["model1"] })</code></div></div></div>
+          <div class="flow-item"><div class="flow-num">2</div><div class="flow-body"><div class="flow-title">DB.UpdateGang()</div><div class="flow-desc">label, color, icon güncellenir.</div></div></div>
+          <div class="flow-item"><div class="flow-num">3</div><div class="flow-body"><div class="flow-title">DB.UpdateGangNpcModels()</div><div class="flow-desc">npc_models JSON olarak tablet_gangs'a kaydedilir.</div></div></div>
+          <div class="flow-item"><div class="flow-num">4</div><div class="flow-body"><div class="flow-title">Territory_RefreshGangNpcModels()</div><div class="flow-desc">O gang'ın tüm territory'lerine canlı broadcast gider.</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN LUA -->
+  <section id="admin">
+    <div class="section-eyebrow">04 — server/admin.lua</div>
+    <h2>Admin Veri<br><em>Parse Katmanı</em></h2>
+    <p class="section-lead">Admin paneli açıldığında tüm veriyi frontend'e gönderen <code style="color:var(--blue);font-size:14px">Admin_SendData()</code> fonksiyonuna npc_models JSON parse bloğu eklendi.</p>
+
+    <div class="g2">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Parse Bloğu</div>
+        <div class="code"><span class="ck">for</span> _, g <span class="ck">in</span> <span class="cv">ipairs</span>(gangs) <span class="ck">do</span>
+  <span class="cc">-- Mevcut ranks parse (değişmedi)</span>
+  <span class="ck">if</span> <span class="ck">type</span>(g.ranks) == <span class="cs">'string'</span> <span class="ck">then</span>
+    <span class="ck">local</span> ok, p = <span class="cv">pcall</span>(json.decode, g.ranks)
+    g.ranks = ok <span class="ck">and</span> p <span class="ck">or</span> {}
+  <span class="ck">end</span>
+
+  <span class="cc">-- YENİ: npc_models parse</span>
+  <span class="ck">if</span> <span class="ck">type</span>(g.npc_models) == <span class="cs">'string'</span> <span class="ck">then</span>
+    <span class="ck">local</span> ok, p = <span class="cv">pcall</span>(json.decode, g.npc_models)
+    g.npc_models = ok <span class="ck">and</span> p <span class="ck">or</span> {}
+  <span class="ck">end</span>
+<span class="ck">end</span></div>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Frontend'e Giden Gang Objesi</div>
+        <div class="code">{
+  <span class="cv">"gang_id"</span>:     <span class="cs">"ballas"</span>,
+  <span class="cv">"gang_label"</span>:  <span class="cs">"Ballas"</span>,
+  <span class="cv">"npc_models"</span>: [
+    <span class="cs">"g_m_y_ballaeast_01"</span>,
+    <span class="cs">"s_m_y_dealer_01"</span>
+  ],
+  <span class="cv">"ranks"</span>: [...]
+}</div>
+        <div class="hbox hbox-green" style="margin-top:12px">
+          <div class="hbox-title">pcall Güvencesi</div>
+          <p>DB'de bozuk JSON varsa <code style="color:var(--green)">pcall</code> sayesinde sunucu crash olmaz, boş array döner.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENT -->
+  <section id="client">
+    <div class="section-eyebrow">05 — client/territory_npcs.lua ✦ YENİ DOSYA</div>
+    <h2>Client Spawn<br><em>Thread</em></h2>
+    <p class="section-lead">Sistemin kalbi. Tamamen bağımsız — territory.lua'ya değişiklik yapılmadı. Periyodik bir thread ile zone içinde eksik ped'leri tamamlar.</p>
+
+    <div class="stat-strip" style="grid-template-columns:repeat(4,1fr);margin-bottom:32px">
+      <div class="stat-cell"><div class="stat-val" style="color:var(--blue)">5s</div><div class="stat-label">Kontrol aralığı</div></div>
+      <div class="stat-cell"><div class="stat-val" style="color:var(--green)">5</div><div class="stat-label">Max ped / zone</div></div>
+      <div class="stat-cell"><div class="stat-val" style="color:var(--yellow)">25m</div><div class="stat-label">Wander yarıçapı</div></div>
+      <div class="stat-cell"><div class="stat-val" style="color:var(--purple)">4</div><div class="stat-label">State değişkeni</div></div>
+    </div>
+
+    <div class="g2" style="margin-bottom:24px">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">State Değişkenleri</div>
+        <div class="code"><span class="ck">local</span> <span class="cv">TerritoryNpcData</span> = {}
+<span class="cc">-- Hangi territory'nin hangi modelleri var</span>
+
+<span class="ck">local</span> <span class="cv">ZoneExtraPeds</span> = {}
+<span class="cc">-- Hangi zone'da kaç ped spawn ettiğimiz</span>
+
+<span class="ck">local</span> <span class="cv">CurrentZoneId</span> = <span class="cn">nil</span>
+<span class="cc">-- Oyuncunun şu an içinde olduğu zone</span>
+
+<span class="ck">local</span> <span class="cv">rs_graff_active</span> = <span class="cn">false</span>
+<span class="cc">-- rs_graff yoksa sistem pasif</span></div>
+
+        <div style="margin-top:16px;font-size:14px;font-weight:600;color:var(--text);margin-bottom:10px">Yardımcı Fonksiyonlar</div>
+        <div class="check-list">
+          <div class="check-item">
+            <div class="ci ci-blue">🔧</div>
+            <div><div class="ct"><strong>_loadModel(hash)</strong></div><div class="cs2">RequestModel → max 5sn bekle → HasModelLoaded döner</div></div>
+          </div>
+          <div class="check-item">
+            <div class="ci ci-yellow">🧹</div>
+            <div><div class="ct"><strong>_cleanDeadPeds(peds)</strong></div><div class="cs2">Sondan başa iterate, silinmiş/ölmüş ped'leri table.remove ile çıkarır</div></div>
+          </div>
+          <div class="check-item">
+            <div class="ci ci-green">📊</div>
+            <div><div class="ct"><strong>_countAlivePeds(peds)</strong></div><div class="cs2">DoesEntityExist + IsEntityDead kontrolü, canlı sayısı döner</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">_spawnOnePed() — Ana Spawn Fonksiyonu</div>
+        <div class="flow-list">
+          <div class="flow-item"><div class="flow-num">1</div><div class="flow-body"><div class="flow-title">Model seç (round-robin)</div><div class="flow-desc">3 model varsa → 1,2,3,1,2,3... sırayla. <code style="color:var(--blue);font-size:12px">((idx-1) % #models) + 1</code></div></div></div>
+          <div class="flow-item"><div class="flow-num">2</div><div class="flow-body"><div class="flow-title">Hash al ve yükle</div><div class="flow-desc"><code style="color:var(--blue);font-size:12px">GetHashKey(modelName)</code> → <code style="color:var(--blue);font-size:12px">_loadModel(hash)</code> — geçersiz model atlanır.</div></div></div>
+          <div class="flow-item"><div class="flow-num">3</div><div class="flow-body"><div class="flow-title">Rastgele pozisyon</div><div class="flow-desc">Zone merkezi etrafında açı + mesafe hesabı. Z ekseni için GetGroundZ kullanılır.</div></div></div>
+          <div class="flow-item"><div class="flow-num">4</div><div class="flow-body"><div class="flow-title">CreatePed(4, ...)</div><div class="flow-desc">Tip 4 = civilian. Gang görünümü için model seçimi admin'e bırakıldı.</div></div></div>
+          <div class="flow-item"><div class="flow-num">5</div><div class="flow-body"><div class="flow-title">Davranış ayarla</div><div class="flow-desc">Kaçmaz, patlama tepkisi yok, TaskWanderStandard 25m yarıçapında dolaşır.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px">Ana Thread Mantığı — Her 5 Saniyede</div>
+    <div class="pb" style="margin-bottom:24px">
+      <div class="pb-head"><div class="pb-icon">🔄</div><div class="pb-title">StartNpcThread() — Periyodik Kontrol</div><div class="pb-badge">CheckIntervalMs: 5000</div></div>
+      <div class="pb-body">
+        <div class="check-list">
+          <div class="check-item"><div class="ci ci-blue">1</div><div><div class="ct">Oyuncu pozisyonunu al</div><div class="cs2">GetEntityCoords(PlayerPedId())</div></div></div>
+          <div class="check-item"><div class="ci ci-blue">2</div><div><div class="ct">Tüm TerritoryNpcData'yı döngüyle tara</div><div class="cs2">npc_models dolu mu? → 2D mesafe hesabı (dx²+dy² ≤ r² — sqrt almaktan kaçın)</div></div></div>
+          <div class="check-item"><div class="ci ci-green">3</div><div><div class="ct">Zone bulunduysa EnterZone() çağır</div><div class="cs2">Önceki zone değiştiyse eski ped'leri sil, yeni zone tracking başlat</div></div></div>
+          <div class="check-item"><div class="ci ci-yellow">4</div><div><div class="ct">Ped listesini temizle ve say</div><div class="cs2">_cleanDeadPeds → alive = _countAlivePeds → needed = MaxPerTerritory - alive</div></div></div>
+          <div class="check-item"><div class="ci ci-purple">5</div><div><div class="ct">Needed kadar yeni ped spawn et</div><div class="cs2">_spawnOnePed() döngüsü. Ölmüş/silinen ped'lerin yerine yenisi konur.</div></div></div>
+          <div class="check-item"><div class="ci ci-orange">6</div><div><div class="ct">Hiç zone bulunamadıysa ExitZone()</div><div class="cs2">Önceden zone'daydık → tüm ekstra ped'leri DeleteEntity ile sil.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px">Sync Event Handler'ları</div>
+    <div class="g2">
+      <div class="check-list">
+        <div class="check-item">
+          <div class="ci ci-blue">📡</div>
+          <div>
+            <div class="ct"><strong>territory:all_data</strong></div>
+            <div class="cs2">ExitZone() → TerritoryNpcData temizle → Yeni data al. Sunucuya bağlanınca tetiklenir.</div>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="ci ci-green">➕</div>
+          <div>
+            <div class="ct"><strong>territory:sync_one</strong></div>
+            <div class="cs2">Yeni territory claim edildi. TerritoryNpcData'ya ekle — thread sonraki turda yakalar.</div>
+          </div>
+        </div>
+      </div>
+      <div class="check-list">
+        <div class="check-item">
+          <div class="ci ci-yellow">🗑️</div>
+          <div>
+            <div class="ct"><strong>territory:removed</strong></div>
+            <div class="cs2">TerritoryNpcData'dan sil. İçindeysek ExitZone() çağır, ped'leri temizle.</div>
+          </div>
+        </div>
+        <div class="check-item">
+          <div class="ci ci-purple">🔄</div>
+          <div>
+            <div class="ct"><strong>territory:npc_models_updated</strong></div>
+            <div class="cs2">Model güncellendi → ZoneExtraPeds sıfırla → Thread yenilerini spawn edecek.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFIG -->
+  <section id="config">
+    <div class="section-eyebrow">06 — config.lua + fxmanifest.lua</div>
+    <h2>Yapılandırma<br><em>&amp; Manifest</em></h2>
+    <p class="section-lead">Üç ayarlanabilir parametre. MaxPerTerritory = 0 yapılırsa sistem tamamen devre dışı kalır.</p>
+
+    <div class="g2">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Config.TerritoryNpcs</div>
+        <div class="code"><span class="cv">Config</span>.TerritoryNpcs = {
+  <span class="cv">MaxPerTerritory</span> = <span class="cn">5</span>,
+  <span class="cc">-- Zone içinde max ekstra ped sayısı</span>
+  <span class="cc">-- 0 = sistem kapalı</span>
+
+  <span class="cv">WanderRadius</span>    = <span class="cn">25.0</span>,
+  <span class="cc">-- Ped spawn noktasından ne kadar uzaklaşır</span>
+
+  <span class="cv">CheckIntervalMs</span> = <span class="cn">5000</span>,
+  <span class="cc">-- Zone kontrol sıklığı (ms)</span>
+}</div>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">fxmanifest.lua — Script Sırası</div>
+        <div class="code">client_scripts {
+  ...
+  <span class="cs">'client/territory.lua'</span>,
+  <span class="cs">'client/territory_npcs.lua'</span>, <span class="cc">-- YENİ</span>
+  <span class="cs">'client/debug.lua'</span>
+}</div>
+        <div class="hbox hbox-blue" style="margin-top:12px">
+          <div class="hbox-title">Sıra Neden Bu?</div>
+          <p>territory.lua'dan sonra yüklenmesi şart değil (doğrudan bağımlılık yok) ama mantıksal sıra açısından doğru.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN PANELİ -->
+  <section id="panel">
+    <div class="section-eyebrow">07 — web/src/apps/AdminApp.jsx</div>
+    <h2>Admin Panel<br><em>Değişiklikleri</em></h2>
+    <p class="section-lead">Gang form'a NPC model textarea eklendi, kayıt payload güncellendi ve gang card'da model sayısı gösterimi eklendi.</p>
+
+    <div class="g2" style="margin-bottom:24px">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Textarea Bileşeni</div>
+        <div class="code"><span class="ck">&lt;textarea</span>
+  rows={<span class="cn">3</span>}
+  placeholder={<span class="cs">"s_m_y_dealer_01\ng_m_y_ballaeast_01"</span>}
+  value={(newGang.npcModels || []).<span class="cv">join</span>(<span class="cs">'\n'</span>)}
+  onChange={e => setNewGang(p => ({
+    ...p,
+    npcModels: e.target.value
+      .<span class="cv">split</span>(<span class="cs">'\n'</span>)
+      .<span class="cv">map</span>(s => s.<span class="cv">trim</span>())
+      .<span class="cv">filter</span>(<span class="cv">Boolean</span>)
+  }))}
+  className=<span class="cs">"input-dark w-full text-sm font-mono"</span>
+/></code></div>
+        <div class="hbox hbox-blue" style="margin-top:12px">
+          <div class="hbox-title">Her Satır = Bir Model</div>
+          <p>Admin her satıra bir GTA model adı yazar. <code style="color:var(--blue)">font-mono</code> ile monospace font — kod yazmak için uygun.</p>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Diğer Değişiklikler</div>
+        <div class="check-list">
+          <div class="check-item">
+            <div class="ci ci-blue">📋</div>
+            <div>
+              <div class="ct"><strong>Mock data güncellendi</strong></div>
+              <div class="cs2">FiveM olmadan tarayıcıda geliştirme için. <code style="font-size:11px;color:var(--blue)">npc_models: []</code> eklendi.</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="ci ci-green">✏️</div>
+            <div>
+              <div class="ct"><strong>Düzenle formu önceden dolu gelir</strong></div>
+              <div class="cs2"><code style="font-size:11px;color:var(--green)">npcModels: g.npc_models || []</code> — mevcut modeller textarea'da görünür.</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="ci ci-yellow">💾</div>
+            <div>
+              <div class="ct"><strong>fetchNui payload'a npcModels eklendi</strong></div>
+              <div class="cs2"><code style="font-size:11px;color:var(--yellow)">npcModels: newGang.npcModels || []</code> kayıt sırasında gönderilir.</div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="ci ci-purple">👁️</div>
+            <div>
+              <div class="ct"><strong>Gang card'da model sayısı</strong></div>
+              <div class="cs2">Model varsa card'da <code style="font-size:11px;color:var(--purple)">3 NPC model</code> gösterilir. Sıfırsa hiçbir şey görünmez.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AKIŞ -->
+  <section id="akis">
+    <div class="section-eyebrow">08 — Uçtan Uca Veri Akışı</div>
+    <h2>Admin'den<br><em>GTA Dünyasına</em></h2>
+    <p class="section-lead">Bir model adı yazıp kaydetmekten GTA dünyasında ped'lerin dolaşmaya başlamasına kadar tüm katmanlar.</p>
+
+    <div class="pipeline" style="margin-bottom:32px">
+      <div class="pipe-step">
+        <div class="pipe-left"><div class="pipe-layer" style="color:var(--purple)">Admin UI</div><div class="pipe-file">AdminApp.jsx</div></div>
+        <div class="pipe-arrow">↓</div>
+        <div class="pipe-right">Admin model adı yazar → "Kaydet" tıklar → <code style="color:var(--blue);font-size:12px">fetchNui('updateGang', { ..., npcModels: ['g_m_y_ballaeast_01'] })</code></div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-left"><div class="pipe-layer" style="color:var(--orange)">Server</div><div class="pipe-file">bandana.lua</div></div>
+        <div class="pipe-arrow">↓</div>
+        <div class="pipe-right"><strong>DB.UpdateGang()</strong> — label/color/icon güncellenir. <strong>DB.UpdateGangNpcModels()</strong> — <code style="color:var(--green);font-size:12px">["g_m_y_ballaeast_01"]</code> JSON olarak kaydedilir.</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-left"><div class="pipe-layer" style="color:var(--blue)">Server</div><div class="pipe-file">territory.lua</div></div>
+        <div class="pipe-arrow">↓</div>
+        <div class="pipe-right"><strong>Territory_RefreshGangNpcModels()</strong> çağrılır → GangNpcModels önbelleği güncellenir → Gang'ın tüm territory'lerine <code style="color:var(--blue);font-size:12px">npc_models_updated</code> event'i broadcast edilir.</div>
+      </div>
+      <div class="pipe-step">
+        <div class="pipe-left"><div class="pipe-layer" style="color:var(--teal)">Client</div><div class="pipe-file">territory_npcs.lua</div></div>
+        <div class="pipe-arrow">↓</div>
+        <div class="pipe-right"><strong>TÜM OYUNCULARA</strong> — TerritoryNpcData güncellenir. O zone'da olan oyuncuların mevcut ped'leri silinir. Thread sonraki 5 saniyede yeni modelleri spawn eder.</div>
+      </div>
+      <div class="pipe-step" style="background:rgba(48,209,88,0.03)">
+        <div class="pipe-left"><div class="pipe-layer" style="color:var(--green)">GTA Dünyası</div><div class="pipe-file">Fiziksel ped'ler</div></div>
+        <div class="pipe-arrow"></div>
+        <div class="pipe-right" style="color:var(--green)"><strong>g_m_y_ballaeast_01</strong> modelleri territory zone içinde rastgele pozisyonlarda wander ederek dolaşır. GTA'nın normal ambient ped sistemi aynen devam eder.</div>
+      </div>
+    </div>
+
+    <div class="g3">
+      <div class="outcome-card">
+        <div class="oc-emoji">🎨</div>
+        <div class="oc-text">Admin panelden <strong>gerçek zamanlı</strong> model değişikliği — sunucu yeniden başlatma gerektirmez</div>
+      </div>
+      <div class="outcome-card">
+        <div class="oc-emoji">♻️</div>
+        <div class="oc-text">GTA'nın ped'leri silmesine karşı <strong>otomatik yeniden spawn</strong> — hedef sayı korunur</div>
+      </div>
+      <div class="outcome-card">
+        <div class="oc-emoji">🧹</div>
+        <div class="oc-text">Territory scrape edilince veya oyuncu zone'dan çıkınca <strong>ekstra ped'ler otomatik temizlenir</strong></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-title">VORP Illegal</div>
+  <div class="footer-sub">Territory NPC Model Sistemi · Değişiklik Dökümanı</div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.07 });
+  document.querySelectorAll('section').forEach(s => observer.observe(s));
+
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.sticky-nav a');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if(s.offsetTop - 80 <= scrollY) cur = s.id; });
+    links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#'+cur));
+  }, { passive: true });
+</script>
+</body>
+</html>

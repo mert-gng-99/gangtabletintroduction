@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VORP Illegal — Territory System</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #080808;
+  --bg2: #0f0f0f;
+  --surface: rgba(255,255,255,0.04);
+  --surface-hover: rgba(255,255,255,0.07);
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.14);
+  --text: #f5f5f7;
+  --text2: rgba(255,255,255,0.55);
+  --text3: rgba(255,255,255,0.3);
+  --accent: #ff453a;
+  --blue: #0a84ff;
+  --green: #30d158;
+  --yellow: #ffd60a;
+  --purple: #bf5af2;
+  --teal: #64d2ff;
+  --r: 12px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  padding: 120px 24px 80px;
+  overflow: hidden;
+}
+
+.hero-glow {
+  position: absolute;
+  width: 900px; height: 600px;
+  background: radial-gradient(ellipse, rgba(255,69,58,0.12) 0%, transparent 65%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.hero-glow2 {
+  position: absolute;
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(10,132,255,0.08) 0%, transparent 65%);
+  top: 30%; right: 10%;
+  pointer-events: none;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,69,58,0.12);
+  border: 1px solid rgba(255,69,58,0.25);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 32px;
+  animation: fadeUp 0.8s ease both;
+}
+
+.pill-dot {
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: blink 2s infinite;
+}
+
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(52px, 9vw, 110px);
+  font-weight: 400;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  animation: fadeUp 0.8s 0.1s ease both;
+}
+
+h1 em { font-style: italic; color: var(--accent); }
+
+.hero-sub {
+  margin-top: 24px;
+  font-size: 19px;
+  font-weight: 300;
+  color: var(--text2);
+  max-width: 520px;
+  animation: fadeUp 0.8s 0.2s ease both;
+}
+
+.hero-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 48px;
+  animation: fadeUp 0.8s 0.3s ease both;
+}
+
+.hero-nav a {
+  color: var(--text2);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  transition: all 0.2s;
+}
+
+.hero-nav a:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text3);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  animation: fadeUp 1s 0.6s ease both;
+}
+
+.scroll-line {
+  width: 1px; height: 48px;
+  background: linear-gradient(to bottom, var(--border-strong), transparent);
+  animation: scrollPulse 2s infinite;
+}
+
+@keyframes scrollPulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(20px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* STICKY NAV */
+.sticky-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  padding: 0 40px;
+  background: rgba(8,8,8,0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.sticky-nav::-webkit-scrollbar { display: none; }
+
+.nav-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 16px;
+  color: var(--text);
+  margin-right: 32px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 16px 0;
+}
+
+.nav-logo span { color: var(--accent); }
+
+.sticky-nav a {
+  color: var(--text3);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 18px 16px;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.sticky-nav a:hover { color: var(--text); }
+.sticky-nav a.active { color: var(--text); border-bottom-color: var(--accent); }
+
+/* LAYOUT */
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 40px; }
+@media(max-width:600px){ .wrap{ padding: 0 20px; } }
+
+section {
+  padding: 100px 0 0;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+section.visible { opacity: 1; transform: none; }
+
+.section-eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(34px, 5vw, 56px);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+h2 em { font-style: italic; color: var(--text2); }
+
+.section-lead {
+  font-size: 17px;
+  color: var(--text2);
+  font-weight: 300;
+  max-width: 600px;
+  margin-bottom: 48px;
+  line-height: 1.7;
+}
+
+/* GLASS CARD */
+.glass {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.glass:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+}
+
+/* GRID */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media(max-width:760px){ .g2,.g3 { grid-template-columns: 1fr; } }
+
+/* SYSTEM TOGGLE */
+.toggle-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 48px;
+}
+@media(max-width:700px){ .toggle-grid { grid-template-columns: 1fr; } }
+
+.toggle-node {
+  padding: 28px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.toggle-node.on { border-color: rgba(48,209,88,0.3); background: rgba(48,209,88,0.05); }
+.toggle-node.off { border-color: rgba(255,69,58,0.3); background: rgba(255,69,58,0.05); }
+
+.toggle-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.on .toggle-label { color: var(--green); }
+.off .toggle-label { color: var(--accent); }
+
+.toggle-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.toggle-desc { font-size: 14px; color: var(--text2); line-height: 1.5; }
+.toggle-arrow { text-align: center; color: var(--text3); font-size: 24px; }
+
+/* FLOW */
+.flow-list { display: flex; flex-direction: column; gap: 0; }
+
+.flow-item {
+  display: flex;
+  gap: 20px;
+  position: relative;
+}
+
+.flow-item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 19px; top: 44px; bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+
+.flow-num {
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+  position: relative;
+  z-index: 1;
+  transition: all 0.2s;
+}
+
+.flow-item:hover .flow-num {
+  background: rgba(10,132,255,0.12);
+  border-color: rgba(10,132,255,0.4);
+  color: var(--blue);
+}
+
+.flow-body { padding: 10px 0 32px; flex: 1; }
+.flow-title { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.flow-desc { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+/* TAGS */
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  padding: 3px 10px;
+  border-radius: 6px;
+  margin: 3px 3px 0 0;
+}
+
+.tag-green { background: rgba(48,209,88,0.1); color: var(--green); border: 1px solid rgba(48,209,88,0.2); }
+.tag-red   { background: rgba(255,69,58,0.1); color: var(--accent); border: 1px solid rgba(255,69,58,0.2); }
+.tag-blue  { background: rgba(10,132,255,0.1); color: var(--blue); border: 1px solid rgba(10,132,255,0.2); }
+.tag-yellow{ background: rgba(255,214,10,0.1); color: var(--yellow); border: 1px solid rgba(255,214,10,0.2); }
+
+/* DB SCHEMA */
+.schema-card { border-radius: var(--r); overflow: hidden; border: 1px solid var(--border); }
+
+.schema-header {
+  padding: 16px 20px;
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.schema-header::before {
+  content: '';
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--blue);
+  flex-shrink: 0;
+}
+
+.schema-row {
+  display: flex;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.15s;
+}
+
+.schema-row:last-child { border-bottom: none; }
+.schema-row:hover { background: rgba(255,255,255,0.03); }
+
+.schema-field {
+  width: 160px;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--blue);
+  font-family: 'Courier New', monospace;
+  flex-shrink: 0;
+}
+
+.schema-desc {
+  padding: 12px 20px;
+  font-size: 13px;
+  color: var(--text2);
+  flex: 1;
+  border-left: 1px solid rgba(255,255,255,0.04);
+}
+
+/* STAT STRIP */
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 48px;
+}
+
+@media(max-width:600px){ .stat-strip { grid-template-columns: repeat(2,1fr); } }
+
+.stat-cell {
+  background: var(--bg2);
+  padding: 24px 20px;
+  transition: background 0.2s;
+}
+
+.stat-cell:hover { background: var(--surface); }
+
+.stat-val {
+  font-family: 'DM Serif Display', serif;
+  font-size: 32px;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.stat-label { font-size: 13px; color: var(--text2); font-weight: 300; }
+
+/* PROCESS BOARD */
+.process-board {
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 32px;
+}
+
+.pb-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+}
+
+.pb-icon { font-size: 22px; }
+.pb-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.pb-sub { font-size: 13px; color: var(--text2); margin-left: auto; }
+.pb-body { padding: 24px; }
+
+.check-list { display: flex; flex-direction: column; gap: 10px; }
+
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.check-item:hover { border-color: var(--border); }
+
+.check-icon {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  margin-top: 1px;
+}
+
+.ci-pass { background: rgba(48,209,88,0.15); color: var(--green); }
+.ci-fail { background: rgba(255,69,58,0.15); color: var(--accent); }
+.ci-warn { background: rgba(255,214,10,0.15); color: var(--yellow); }
+
+.check-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+.check-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* OUTCOME GRID */
+.outcome-col { display: flex; flex-direction: column; gap: 12px; }
+
+.outcome-card {
+  padding: 16px 20px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition: all 0.2s;
+}
+
+.outcome-card:hover { background: var(--surface-hover); border-color: var(--border-strong); }
+
+.outcome-emoji { font-size: 20px; flex-shrink: 0; }
+.outcome-text { font-size: 14px; color: var(--text2); line-height: 1.5; }
+.outcome-text strong { color: var(--text); font-weight: 600; }
+
+/* BLIP */
+.blip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media(max-width:600px){ .blip-grid { grid-template-columns: 1fr; } }
+
+.blip-card {
+  padding: 24px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.2s;
+}
+
+.blip-card:hover { transform: translateY(-2px); border-color: var(--border-strong); }
+
+.blip-orb {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.blip-orb::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px solid;
+  animation: ripple 2s infinite;
+}
+
+.bo-green { background: rgba(48,209,88,0.2); }
+.bo-green::after { border-color: rgba(48,209,88,0.3); }
+.bo-red   { background: rgba(255,69,58,0.2); }
+.bo-red::after { border-color: rgba(255,69,58,0.3); animation-delay: 0.5s; }
+
+.bo-inner { width: 16px; height: 16px; border-radius: 50%; }
+.bo-green .bo-inner { background: var(--green); box-shadow: 0 0 12px var(--green); }
+.bo-red .bo-inner   { background: var(--accent); box-shadow: 0 0 12px var(--accent); }
+
+@keyframes ripple {
+  0%   { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+.blip-info h4 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.blip-info p  { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+/* PROXIMITY */
+.prox-diagram {
+  position: relative;
+  height: 300px;
+  border-radius: var(--r);
+  background: radial-gradient(ellipse at center, rgba(10,132,255,0.06) 0%, transparent 60%);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.prox-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pr-outer { width: 240px; height: 240px; border-color: rgba(255,69,58,0.2); background: rgba(255,69,58,0.02); }
+.pr-inner { width: 140px; height: 140px; border-color: rgba(10,132,255,0.35); background: rgba(10,132,255,0.04); }
+
+.pr-label {
+  position: absolute;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.pr-label.outer { top: -20px; color: rgba(255,69,58,0.7); }
+.pr-label.inner { top: -20px; color: rgba(10,132,255,0.9); }
+
+.prox-core {
+  position: absolute;
+  width: 14px; height: 14px;
+  background: var(--text);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.08), 0 0 20px rgba(255,255,255,0.1);
+  z-index: 2;
+}
+
+.prox-player {
+  position: absolute;
+  width: 10px; height: 10px;
+  background: var(--blue);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--blue);
+  animation: orbit 6s linear infinite;
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(90px); }
+  to   { transform: rotate(360deg) translateX(90px); }
+}
+
+.prox-info { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:600px){ .prox-info { grid-template-columns: 1fr; } }
+
+.prox-cell {
+  padding: 16px 20px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.prox-val { font-family: 'DM Serif Display', serif; font-size: 28px; color: var(--text); line-height: 1; margin-bottom: 4px; }
+.prox-key { font-size: 13px; color: var(--text2); }
+
+/* CONFIG TABLE */
+.config-table { width: 100%; border-collapse: collapse; }
+
+.config-table th {
+  text-align: left;
+  padding: 12px 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+}
+
+.config-table td {
+  padding: 16px 20px;
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  vertical-align: top;
+}
+
+.config-table tr:last-child td { border-bottom: none; }
+.config-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+.config-table td:first-child {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: var(--blue);
+  white-space: nowrap;
+}
+
+.config-table td:nth-child(2) {
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  color: var(--yellow);
+}
+
+.config-table td:last-child { color: var(--text2); }
+
+/* EXPORT CARDS */
+.export-card {
+  padding: 24px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  transition: all 0.2s;
+}
+
+.export-card:hover {
+  background: var(--surface-hover);
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+
+.export-name {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.export-sig {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: var(--blue);
+  background: rgba(10,132,255,0.08);
+  border: 1px solid rgba(10,132,255,0.15);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 12px 0;
+  line-height: 1.8;
+}
+
+.export-card p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+/* FOOTER */
+footer {
+  margin-top: 120px;
+  padding: 60px 40px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.footer-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.footer-sub { font-size: 14px; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="pill"><div class="pill-dot"></div>vorp_illegal · Sistem Dökümanı</div>
+  <h1>Territory<br><em>&amp; Claim</em></h1>
+  <p class="hero-sub">Gang bölge kontrol sisteminin mimari, süreç ve yapılandırma referans dökümanı.</p>
+  <div class="hero-nav">
+    <a href="#mimari">Mimari</a>
+    <a href="#veritabani">Veritabanı</a>
+    <a href="#claim">Claim</a>
+    <a href="#discover">Discover</a>
+    <a href="#scrape">Scrape</a>
+    <a href="#blip">Blip</a>
+    <a href="#proximity">Proximity</a>
+    <a href="#config">Config</a>
+    <a href="#exports">Exports</a>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    SCROLL
+  </div>
+</div>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav">
+  <a href="index.html" style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.4);text-decoration:none;font-size:12px;font-weight:500;margin-right:20px;flex-shrink:0;transition:color .2s" onmouseover="this.style.color='rgba(255,255,255,0.85)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>Ana Sayfa</a><div class="nav-logo">VORP <span>Illegal</span></div>
+  <a href="#mimari">Mimari</a>
+  <a href="#veritabani">Veritabanı</a>
+  <a href="#claim">Claim</a>
+  <a href="#discover">Discover</a>
+  <a href="#scrape">Scrape</a>
+  <a href="#blip">Blip</a>
+  <a href="#proximity">Proximity</a>
+  <a href="#config">Config</a>
+  <a href="#exports">Exports</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- MİMARİ -->
+  <section id="mimari">
+    <div class="section-eyebrow">01 — Genel Mimari</div>
+    <h2>İki Katmanlı<br><em>Bağımsız Sistem</em></h2>
+    <p class="section-lead">Server ve client, başlangıçta 2 saniye bekleyip <code style="color:var(--blue);font-size:14px">rs_graff</code> resource'unun aktif olup olmadığını kontrol eder ve buna göre hangi sistemin çalışacağına karar verir.</p>
+
+    <div class="toggle-grid">
+      <div class="toggle-node on">
+        <div class="toggle-label">rs_graff Aktif</div>
+        <div class="toggle-title">Yeni Sistem</div>
+        <div class="toggle-desc">Territory sistemi <strong style="color:var(--green)">açık</strong>. rs_graff entegrasyonu devreye girer, tüm claim/discover/scrape işlemleri aktif.</div>
+      </div>
+      <div class="toggle-arrow">→</div>
+      <div class="toggle-node off">
+        <div class="toggle-label">rs_graff Yok</div>
+        <div class="toggle-title">Eski Sistem</div>
+        <div class="toggle-desc">Territory sistemi <strong style="color:var(--accent)">kapalı</strong>. <code style="font-size:13px;color:var(--text2)">graffiti.lua</code> / <code style="font-size:13px;color:var(--text2)">laptop_sprays</code> devreye girer.</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="glass" style="padding:28px">
+        <div style="font-size:28px;margin-bottom:14px">🖥️</div>
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px">Server Sorumluluğu</div>
+        <p style="font-size:14px;color:var(--text2);line-height:1.6">Veritabanı yönetimi, gang doğrulama, claim/discover/scrape işlem kontrolü, tüm clientlara sync gönderimi.</p>
+      </div>
+      <div class="glass" style="padding:28px">
+        <div style="font-size:28px;margin-bottom:14px">🎮</div>
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px">Client Sorumluluğu</div>
+        <p style="font-size:14px;color:var(--text2);line-height:1.6">Proximity scan (1.5s), target zone yönetimi, animasyonlar, progress bar UI, blip görselleştirmesi.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VERİTABANI -->
+  <section id="veritabani">
+    <div class="section-eyebrow">02 — Veritabanı</div>
+    <h2>Otomatik Tablo<br><em>Oluşturma</em></h2>
+    <p class="section-lead">Sistem başlangıçta iki tablo otomatik olarak oluşturulur. Manuel kurulum gerekmez.</p>
+
+    <div class="g2" style="margin-bottom:16px">
+      <div class="schema-card">
+        <div class="schema-header">vorp_territories</div>
+        <div class="schema-row"><div class="schema-field">graff_id</div><div class="schema-desc">rs_graff'taki tag ID'si</div></div>
+        <div class="schema-row"><div class="schema-field">gang_name</div><div class="schema-desc">Sahip gang'ın sistem adı</div></div>
+        <div class="schema-row"><div class="schema-field">gang_label</div><div class="schema-desc">Gang'ın görünen etiketi</div></div>
+        <div class="schema-row"><div class="schema-field">owner_identifier</div><div class="schema-desc">Oyuncunun citizen ID'si</div></div>
+        <div class="schema-row"><div class="schema-field">owner_name</div><div class="schema-desc">Oyuncunun karakter adı</div></div>
+        <div class="schema-row"><div class="schema-field">x, y, z</div><div class="schema-desc">Dünya koordinatları</div></div>
+        <div class="schema-row"><div class="schema-field">radius</div><div class="schema-desc">Etki alanı <span class="tag tag-yellow">100m varsayılan</span></div></div>
+      </div>
+      <div class="schema-card">
+        <div class="schema-header">vorp_discoveries</div>
+        <div class="schema-row"><div class="schema-field">territory_id</div><div class="schema-desc">Keşfedilen territory ID</div></div>
+        <div class="schema-row"><div class="schema-field">gang_name</div><div class="schema-desc">Keşfeden gang adı</div></div>
+        <div class="schema-row">
+          <div class="schema-field">UNIQUE KEY</div>
+          <div class="schema-desc">
+            <code style="font-size:12px;color:var(--yellow)">(territory_id, gang_name)</code>
+            <div style="font-size:12px;color:var(--text2);margin-top:4px">Her gang bir territory'yi yalnızca bir kez keşfedebilir.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:20px 24px;border-radius:10px;background:rgba(10,132,255,0.06);border:1px solid rgba(10,132,255,0.15);">
+      <div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:4px">Gang Tespiti — İki Aşamalı Fallback</div>
+      <div style="font-size:14px;color:var(--text2);line-height:1.6">Önce <code style="color:var(--blue);font-size:13px">tablet_gang_members</code> tablosundan citizenid ile sorgu atılır. Kayıt bulunamazsa <code style="color:var(--blue);font-size:13px">GetGangByPlayer()</code> ile laptop_gangs sistemine fallback yapılır.</div>
+    </div>
+  </section>
+
+  <!-- CLAIM -->
+  <section id="claim">
+    <div class="section-eyebrow">03 — Claim Süreci</div>
+    <h2>Territory<br><em>Oluşturma</em></h2>
+    <p class="section-lead">Oyuncu rs_graff ile graffiti çizdiğinde <code style="color:var(--blue);font-size:14px">rs_graff:hook:finalized</code> event'i tetiklenir.</p>
+
+    <div class="process-board">
+      <div class="pb-header">
+        <div class="pb-icon">🎨</div>
+        <div><div class="pb-title">Claim Kontrol Akışı</div></div>
+        <div class="pb-sub">4 adım</div>
+      </div>
+      <div class="pb-body">
+        <div class="check-list">
+          <div class="check-item">
+            <div class="check-icon ci-warn">?</div>
+            <div>
+              <div class="check-text"><strong>Gang tespiti</strong></div>
+              <div class="check-sub">Gang üyesi değilse süreç durur. <span class="tag tag-red">DUR</span></div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-icon ci-warn">?</div>
+            <div>
+              <div class="check-text"><strong>Bu graff için territory zaten var mı?</strong></div>
+              <div class="check-sub">Aynı graff_id ile kayıt varsa durur. <span class="tag tag-red">Duplicate → DUR</span></div>
+            </div>
+          </div>
+          <div class="check-item">
+            <div class="check-icon ci-warn">?</div>
+            <div>
+              <div class="check-text"><strong>100m yarıçap içinde başka territory?</strong></div>
+              <div class="check-sub">Overlap varsa hata: <em style="color:var(--accent)">"Bu alan zaten kaplandı"</em> <span class="tag tag-red">DUR</span></div>
+            </div>
+          </div>
+          <div class="check-item" style="background:rgba(48,209,88,0.05);border-color:rgba(48,209,88,0.15)">
+            <div class="check-icon ci-pass">✓</div>
+            <div>
+              <div class="check-text"><strong style="color:var(--green)">Tüm kontroller geçildi</strong></div>
+              <div class="check-sub">DB'ye INSERT → Memory'e ekle → Tüm clientlara sync_one → Başarı bildirimi</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DISCOVER -->
+  <section id="discover">
+    <div class="section-eyebrow">04 — Discover Süreci</div>
+    <h2>Territory<br><em>Keşfi</em></h2>
+    <p class="section-lead">Oyuncu düşman territory'sine ~15m yaklaştığında "Keşfet" seçeneği belirir. Kendi gang'ının territory'sinde bu seçenek görünmez.</p>
+
+    <div class="stat-strip">
+      <div class="stat-cell">
+        <div class="stat-val" style="color:var(--blue)">15m</div>
+        <div class="stat-label">Tetikleme mesafesi</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val" style="color:var(--yellow)">5s</div>
+        <div class="stat-label">Progress bar süresi</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val" style="color:var(--green)">10m</div>
+        <div class="stat-label">Server mesafe kontrolü</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val" style="color:var(--text2)">1×</div>
+        <div class="stat-label">Keşif başına max</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div>
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px">Client Akışı</div>
+        <div class="flow-list">
+          <div class="flow-item">
+            <div class="flow-num">1</div>
+            <div class="flow-body">
+              <div class="flow-title">Target Zone Oluşur</div>
+              <div class="flow-desc">Oyuncu &lt;15m yaklaştığında hedefleme noktası aktif olur, "Keşfet" seçeneği görünür.</div>
+            </div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-num">2</div>
+            <div class="flow-body">
+              <div class="flow-title">Progress Bar — 5 Saniye</div>
+              <div class="flow-desc">Hareket kilitli, iptal edilebilir. Tamamlanmadan ayrılırsa sıfırlanır.</div>
+            </div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-num">3</div>
+            <div class="flow-body">
+              <div class="flow-title">Server Event Gönderilir</div>
+              <div class="flow-desc"><code style="color:var(--blue);font-size:12px">vorp_illegal:territory:discover</code> tetiklenir.</div>
+            </div>
+          </div>
+          <div class="flow-item">
+            <div class="flow-num">4</div>
+            <div class="flow-body">
+              <div class="flow-title">Broadcast & UI Güncelleme</div>
+              <div class="flow-desc">DB'ye INSERT → Tüm clientlara broadcast → Discover opsiyonu gizlenir.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px">Server Kontrolleri</div>
+        <div class="check-list">
+          <div class="check-item"><div class="check-icon ci-warn">?</div><div><div class="check-text">Gang üyesi mi?</div></div></div>
+          <div class="check-item"><div class="check-icon ci-warn">?</div><div><div class="check-text">10m mesafe içinde mi?</div></div></div>
+          <div class="check-item"><div class="check-icon ci-warn">?</div><div><div class="check-text">Daha önce keşfedilmiş mi?</div></div></div>
+          <div class="check-item" style="background:rgba(48,209,88,0.05);border-color:rgba(48,209,88,0.15)">
+            <div class="check-icon ci-pass">✓</div>
+            <div><div class="check-text" style="color:var(--green)">vorp_discoveries → INSERT</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCRAPE -->
+  <section id="scrape">
+    <div class="section-eyebrow">05 — Scrape Süreci</div>
+    <h2>Territory Silme<br><em>&amp; Ele Geçirme</em></h2>
+    <p class="section-lead">"Sil" seçeneği yalnızca düşman territory'sinde görünür. Kendi territory'nizi silemezsiniz.</p>
+
+    <div class="stat-strip" style="margin-bottom:32px">
+      <div class="stat-cell">
+        <div class="stat-val" style="color:var(--accent)">12s</div>
+        <div class="stat-label">Scrape süresi</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val" style="color:var(--yellow)">10m</div>
+        <div class="stat-label">Mesafe limiti</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val" style="color:var(--teal)">30s</div>
+        <div class="stat-label">Saldırı blip süresi</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-val" style="color:var(--green)">0</div>
+        <div class="stat-label">MinOnlineEnemies (dev)</div>
+      </div>
+    </div>
+
+    <div class="g2">
+      <div class="process-board" style="margin-bottom:0">
+        <div class="pb-header">
+          <div class="pb-icon">🧹</div>
+          <div><div class="pb-title">Server Kontrolleri</div></div>
+        </div>
+        <div class="pb-body">
+          <div class="check-list">
+            <div class="check-item"><div class="check-icon ci-warn">?</div><div><div class="check-text">Gang üyesi mi?</div><div class="check-sub">Değilse reddedilir</div></div></div>
+            <div class="check-item"><div class="check-icon ci-warn">?</div><div><div class="check-text">Kendi territory'si mi?</div><div class="check-sub">Kendi bölgesini silemez</div></div></div>
+            <div class="check-item"><div class="check-icon ci-warn">?</div><div><div class="check-text">10m mesafe içinde mi?</div></div></div>
+            <div class="check-item"><div class="check-icon ci-warn">?</div><div><div class="check-text">cleaning_kit var mı?</div><div class="check-sub">Config'de tanımlıysa kontrol edilir</div></div></div>
+            <div class="check-item"><div class="check-icon ci-warn">?</div><div><div class="check-text">MinOnlineEnemies yeterli mi?</div><div class="check-sub">Şu an 0 = dev mod</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px">Başarılı Scrape Sonuçları</div>
+        <div class="outcome-col">
+          <div class="outcome-card"><div class="outcome-emoji">🧽</div><div class="outcome-text"><strong>cleaning_kit</strong> inventory'den düşer</div></div>
+          <div class="outcome-card"><div class="outcome-emoji">🔴</div><div class="outcome-text">Sahip gang'a <strong>saldırı bildirimi</strong> + 30s yanıp sönen blip</div></div>
+          <div class="outcome-card"><div class="outcome-emoji">🗑️</div><div class="outcome-text"><strong>rs_graff:RemoveTagById()</strong> ile graffiti silinir</div></div>
+          <div class="outcome-card"><div class="outcome-emoji">🗃️</div><div class="outcome-text"><strong>vorp_territories</strong> ve <strong>vorp_discoveries</strong> DB'den silinir</div></div>
+          <div class="outcome-card"><div class="outcome-emoji">📡</div><div class="outcome-text">Tüm clientlara <strong>territory:removed</strong> sync'i</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BLIP -->
+  <section id="blip">
+    <div class="section-eyebrow">06 — Blip Sistemi</div>
+    <h2>Harita<br><em>İşaretçileri</em></h2>
+    <p class="section-lead">Tablet UI'dan tetiklenen iki farklı mod haritada farklı territory'leri görselleştirir. Her aktivasyonda önceki blip'ler temizlenir.</p>
+
+    <div class="blip-grid">
+      <div class="blip-card">
+        <div class="blip-orb bo-green"><div class="bo-inner"></div></div>
+        <div class="blip-info">
+          <h4>show_owned</h4>
+          <p>Kendi gang'ının territory'leri · Yeşil · BlipColorOwned = 2</p>
+        </div>
+      </div>
+      <div class="blip-card">
+        <div class="blip-orb bo-red"><div class="bo-inner"></div></div>
+        <div class="blip-info">
+          <h4>show_discovered</h4>
+          <p>Keşfedilen düşman territory'leri · Kırmızı · BlipColorDiscovered = 1</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROXIMITY -->
+  <section id="proximity">
+    <div class="section-eyebrow">07 — Proximity Scan</div>
+    <h2>Yakınlık<br><em>Taraması</em></h2>
+    <p class="section-lead">Client thread her 1.5 saniyede bir çalışarak oyuncunun konumunu territory'lerle karşılaştırır.</p>
+
+    <div class="prox-diagram">
+      <div class="prox-ring pr-outer"><div class="pr-label outer">25m — Zone KALDIR</div></div>
+      <div class="prox-ring pr-inner"><div class="pr-label inner">15m — Zone EKLE</div></div>
+      <div class="prox-core"></div>
+      <div class="prox-player"></div>
+    </div>
+
+    <div class="prox-info">
+      <div class="prox-cell">
+        <div class="prox-val" style="color:var(--blue)">15m</div>
+        <div class="prox-key">Target zone eklenir, henüz aktif değilse</div>
+      </div>
+      <div class="prox-cell">
+        <div class="prox-val" style="color:var(--accent)">25m</div>
+        <div class="prox-key">Target zone kaldırılır, bölgeden çıkıldı</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONFIG -->
+  <section id="config">
+    <div class="section-eyebrow">08 — Config</div>
+    <h2>Yapılandırma<br><em>Parametreleri</em></h2>
+    <p class="section-lead">Tüm süre, mesafe ve davranış ayarları config dosyasından yönetilir.</p>
+
+    <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden">
+      <table class="config-table">
+        <thead>
+          <tr>
+            <th>Parametre</th>
+            <th>Değer</th>
+            <th>Açıklama</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>ZoneRadius</td><td>100m</td><td>Territory yarıçapı ve overlap kontrol mesafesi</td></tr>
+          <tr><td>ScrapeRequiredItem</td><td>cleaning_kit</td><td>Scrape işlemi için gerekli envanter eşyası</td></tr>
+          <tr><td>ScrapeDurationMs</td><td>12000</td><td>Scrape progress bar süresi (12 saniye)</td></tr>
+          <tr><td>DiscoverDurationMs</td><td>5000</td><td>Keşif progress bar süresi (5 saniye)</td></tr>
+          <tr><td>MinOnlineEnemies</td><td>0</td><td>Scrape için gereken min düşman online sayısı. 0 = dev mod</td></tr>
+          <tr><td>NotifyGangOnScrape</td><td>true</td><td>Scrape sırasında saldırı bildirimini aç/kapat</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- EXPORTS -->
+  <section id="exports">
+    <div class="section-eyebrow">09 — Exports</div>
+    <h2>Diğer Resource'lara<br><em>API Erişimi</em></h2>
+    <p class="section-lead">server/territory.lua:616 üç export sunar. Başka resource'lar territory verisine programatik olarak erişebilir.</p>
+
+    <div class="g3">
+      <div class="export-card">
+        <div class="export-name">GetTerritoriesByGang</div>
+        <div class="export-sig">exports["vorp_illegal"]<br>:GetTerritoriesByGang(gangName)</div>
+        <p>Bir gang'ın sahip olduğu tüm territory kayıtlarını döner.</p>
+      </div>
+      <div class="export-card">
+        <div class="export-name">GetDiscoveriesByGang</div>
+        <div class="export-sig">exports["vorp_illegal"]<br>:GetDiscoveriesByGang(gangName)</div>
+        <p>Bir gang'ın keşfettiği tüm düşman territory'lerini döner.</p>
+      </div>
+      <div class="export-card">
+        <div class="export-name">GetTerritoryAtPosition</div>
+        <div class="export-sig">exports["vorp_illegal"]<br>:GetTerritoryAtPosition(x, y, z)</div>
+        <p>Verilen koordinatta aktif bir territory varsa döner.</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="footer-title">VORP Illegal</div>
+  <div class="footer-sub">Territory &amp; Claim System · Sistem Dökümanı</div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('section').forEach(s => observer.observe(s));
+
+  const sections = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.sticky-nav a');
+
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if(s.offsetTop - 80 <= scrollY) cur = s.id; });
+    links.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#'+cur);
+    });
+  }, { passive: true });
+</script>
+</body>
+</html>

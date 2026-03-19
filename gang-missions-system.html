@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VORP Illegal — Gang Mission Sistemi</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#080808;--bg2:#0f0f0f;
+  --surface:rgba(255,255,255,0.04);--surface2:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --text:#f5f5f7;--text2:rgba(255,255,255,0.55);--text3:rgba(255,255,255,0.28);
+  --accent:#ff9f0a;--blue:#0a84ff;--green:#30d158;
+  --red:#ff453a;--purple:#bf5af2;--teal:#64d2ff;--pink:#ff375f;
+  --r:12px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:400;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;padding:120px 24px 80px;overflow:hidden}
+.g1{position:absolute;width:1000px;height:600px;background:radial-gradient(ellipse,rgba(255,159,10,0.1) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.g2{position:absolute;width:500px;height:500px;background:radial-gradient(ellipse,rgba(255,55,95,0.07) 0%,transparent 65%);top:20%;right:5%;pointer-events:none}
+.g3{position:absolute;width:400px;height:400px;background:radial-gradient(ellipse,rgba(10,132,255,0.06) 0%,transparent 65%);bottom:15%;left:10%;pointer-events:none}
+
+.pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,159,10,0.12);border:1px solid rgba(255,159,10,0.28);color:var(--accent);font-size:12px;font-weight:500;letter-spacing:.06em;padding:6px 16px;border-radius:100px;margin-bottom:32px;animation:fadeUp .8s ease both}
+.pill-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+h1{font-family:'DM Serif Display',serif;font-size:clamp(48px,8.5vw,108px);font-weight:400;line-height:1;letter-spacing:-.02em;color:var(--text);animation:fadeUp .8s .1s ease both}
+h1 em{font-style:italic;color:var(--accent)}
+
+.hero-sub{margin-top:24px;font-size:18px;font-weight:300;color:var(--text2);max-width:560px;line-height:1.7;animation:fadeUp .8s .2s ease both}
+
+.hero-stats{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;margin-top:40px;animation:fadeUp .8s .3s ease both}
+.hstat{text-align:center}
+.hstat-val{font-family:'DM Serif Display',serif;font-size:36px;line-height:1}
+.hstat-label{font-size:12px;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;margin-top:2px}
+
+.hero-nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:36px;animation:fadeUp .8s .35s ease both}
+.hero-nav a{color:var(--text2);text-decoration:none;font-size:13px;font-weight:500;padding:9px 18px;border-radius:100px;border:1px solid var(--border);background:var(--surface);transition:all .2s}
+.hero-nav a:hover{background:var(--surface2);border-color:var(--border2);color:var(--text)}
+
+.scroll-hint{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text3);font-size:11px;letter-spacing:.12em;animation:fadeUp 1s .6s ease both}
+.scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,var(--border2),transparent);animation:sp 2s infinite}
+@keyframes sp{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* NAV */
+.snav{position:sticky;top:0;z-index:100;padding:0 40px;background:rgba(8,8,8,.88);backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--border);display:flex;align-items:center;overflow-x:auto;scrollbar-width:none}
+.snav::-webkit-scrollbar{display:none}
+.nlogo{font-family:'DM Serif Display',serif;font-size:16px;color:var(--text);margin-right:28px;white-space:nowrap;flex-shrink:0;padding:16px 0}
+.nlogo span{color:var(--accent)}
+.snav a{color:var(--text3);text-decoration:none;font-size:13px;font-weight:500;padding:18px 14px;white-space:nowrap;border-bottom:2px solid transparent;transition:all .2s;flex-shrink:0}
+.snav a:hover{color:var(--text)}
+.snav a.active{color:var(--text);border-bottom-color:var(--accent)}
+
+/* LAYOUT */
+.wrap{max-width:1100px;margin:0 auto;padding:0 40px}
+@media(max-width:600px){.wrap{padding:0 20px}}
+section{padding:100px 0 0;opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+section.visible{opacity:1;transform:none}
+.eyebrow{font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+h2{font-family:'DM Serif Display',serif;font-size:clamp(32px,5vw,54px);font-weight:400;letter-spacing:-.02em;line-height:1.1;color:var(--text);margin-bottom:16px}
+h2 em{font-style:italic;color:var(--text2)}
+.lead{font-size:17px;color:var(--text2);font-weight:300;max-width:640px;margin-bottom:48px;line-height:1.7}
+
+/* GRID */
+.g-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1px}
+@media(max-width:760px){.g-2,.g-3{grid-template-columns:1fr}}
+@media(max-width:600px){.g-4{grid-template-columns:repeat(2,1fr)}}
+
+/* GLASS */
+.glass{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);transition:background .2s,border-color .2s}
+.glass:hover{background:var(--surface2);border-color:var(--border2)}
+
+/* STAT STRIP */
+.ss{background:var(--border);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:48px}
+.sc{background:var(--bg2);padding:24px 20px;transition:background .2s}
+.sc:hover{background:var(--surface)}
+.sv{font-family:'DM Serif Display',serif;font-size:30px;line-height:1;margin-bottom:5px}
+.sl{font-size:13px;color:var(--text2);font-weight:300}
+
+/* CODE */
+.code{background:#0b0b0f;border:1px solid var(--border);border-radius:8px;padding:16px 20px;font-family:'Courier New',monospace;font-size:12px;line-height:1.9;overflow-x:auto;white-space:pre;color:rgba(255,255,255,.45);margin:10px 0}
+.ck{color:#ff6b6b}.cv{color:var(--blue)}.cs{color:var(--green)}.cn{color:var(--accent)}.cc{color:rgba(255,255,255,.2);font-style:italic}.cp{color:var(--purple)}
+
+/* SCHEMA */
+.schema{border-radius:var(--r);overflow:hidden;border:1px solid var(--border)}
+.sh{padding:14px 18px;background:rgba(255,255,255,.04);border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.sh .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sr{display:flex;border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s}
+.sr:last-child{border-bottom:none}
+.sr:hover{background:rgba(255,255,255,.03)}
+.sf{width:180px;padding:11px 18px;font-size:12px;font-weight:500;color:var(--blue);font-family:'Courier New',monospace;flex-shrink:0}
+.sd{padding:11px 18px;font-size:13px;color:var(--text2);flex:1;border-left:1px solid rgba(255,255,255,.04)}
+
+/* PROCESS BOARD */
+.pb{border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.pbh{display:flex;align-items:center;gap:14px;padding:18px 22px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)}
+.pbicon{font-size:20px}.pbtitle{font-size:15px;font-weight:600;color:var(--text)}.pbbadge{margin-left:auto;font-size:12px;color:var(--text3)}
+.pbb{padding:20px 22px}
+
+/* CHECK LIST */
+.cl{display:flex;flex-direction:column;gap:8px}
+.ci-item{display:flex;align-items:flex-start;gap:12px;padding:13px 15px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid transparent;transition:all .2s}
+.ci-item:hover{border-color:var(--border)}
+.cii{width:22px;height:22px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;margin-top:1px}
+.ci-o{background:rgba(255,159,10,.15);color:var(--accent)}
+.ci-b{background:rgba(10,132,255,.15);color:var(--blue)}
+.ci-g{background:rgba(48,209,88,.15);color:var(--green)}
+.ci-r{background:rgba(255,69,58,.15);color:var(--red)}
+.ci-p{background:rgba(191,90,242,.15);color:var(--purple)}
+.ct{font-size:14px;color:var(--text);line-height:1.5}
+.cs2{font-size:12px;color:var(--text2);margin-top:3px}
+
+/* FLOW */
+.fl{display:flex;flex-direction:column}
+.fi{display:flex;gap:18px;position:relative}
+.fi:not(:last-child)::before{content:'';position:absolute;left:19px;top:44px;bottom:0;width:1px;background:var(--border)}
+.fn{width:40px;height:40px;flex-shrink:0;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--text2);position:relative;z-index:1;transition:all .2s}
+.fi:hover .fn{background:rgba(255,159,10,.12);border-color:rgba(255,159,10,.4);color:var(--accent)}
+.fb{padding:10px 0 28px;flex:1}
+.ft{font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px}
+.fd{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* TAG */
+.tag{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;padding:2px 9px;border-radius:5px;margin:2px}
+.to{background:rgba(255,159,10,.1);color:var(--accent);border:1px solid rgba(255,159,10,.25)}
+.tb2{background:rgba(10,132,255,.1);color:var(--blue);border:1px solid rgba(10,132,255,.25)}
+.tg{background:rgba(48,209,88,.1);color:var(--green);border:1px solid rgba(48,209,88,.25)}
+.tr{background:rgba(255,69,58,.1);color:var(--red);border:1px solid rgba(255,69,58,.25)}
+.tp{background:rgba(191,90,242,.1);color:var(--purple);border:1px solid rgba(191,90,242,.25)}
+.tt{background:rgba(100,210,255,.1);color:var(--teal);border:1px solid rgba(100,210,255,.25)}
+
+/* HBOX */
+.hbox{padding:18px 22px;border-radius:10px;border-left:3px solid;margin:12px 0}
+.hb-o{background:rgba(255,159,10,.06);border-color:var(--accent)}
+.hb-b{background:rgba(10,132,255,.06);border-color:var(--blue)}
+.hb-g{background:rgba(48,209,88,.06);border-color:var(--green)}
+.hb-r{background:rgba(255,69,58,.06);border-color:var(--red)}
+.hb-p{background:rgba(191,90,242,.06);border-color:var(--purple)}
+.hbox-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.hb-o .hbox-title{color:var(--accent)}.hb-b .hbox-title{color:var(--blue)}.hb-g .hbox-title{color:var(--green)}.hb-r .hbox-title{color:var(--red)}.hb-p .hbox-title{color:var(--purple)}
+.hbox p{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* MISSION TYPE TABLE */
+.mt-table{width:100%;border-collapse:collapse}
+.mt-table th{text-align:left;padding:10px 16px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)}
+.mt-table td{padding:13px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.mt-table tr:last-child td{border-bottom:none}
+.mt-table tr:hover td{background:rgba(255,255,255,.02)}
+.mt-table td:first-child{font-family:'Courier New',monospace;font-size:12px;color:var(--blue)}
+
+/* STAGE TABLE */
+.st-table{width:100%;border-collapse:collapse}
+.st-table th{text-align:left;padding:10px 16px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)}
+.st-table td{padding:12px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text2);vertical-align:top}
+.st-table tr:last-child td{border-bottom:none}
+.st-table tr:hover td{background:rgba(255,255,255,.02)}
+.st-table td:first-child{font-family:'Courier New',monospace;font-size:12px;color:var(--accent);white-space:nowrap}
+
+/* PIPELINE */
+.pipeline{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.ps{display:flex;align-items:stretch;border-bottom:1px solid var(--border);transition:background .2s}
+.ps:last-child{border-bottom:none}
+.ps:hover{background:rgba(255,255,255,.02)}
+.pl{width:160px;flex-shrink:0;padding:16px 18px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;gap:4px}
+.pl-layer{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.pl-file{font-family:'Courier New',monospace;font-size:11px;color:var(--text2);margin-top:2px}
+.pr{flex:1;padding:16px 20px;font-size:13px;color:var(--text2);line-height:1.65;display:flex;align-items:center}
+.parrow{width:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:16px}
+
+/* OUTCOME CARD */
+.oc{padding:16px 18px;border-radius:10px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:flex-start;gap:12px;transition:all .2s}
+.oc:hover{background:var(--surface2);border-color:var(--border2)}
+.oe{font-size:18px;flex-shrink:0}
+.ot{font-size:13px;color:var(--text2);line-height:1.5}
+.ot strong{color:var(--text);font-weight:600}
+
+/* DIFF BADGE */
+.dbadge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;letter-spacing:.05em}
+.d-easy{background:rgba(48,209,88,.12);color:var(--green);border:1px solid rgba(48,209,88,.2)}
+.d-med{background:rgba(255,159,10,.12);color:var(--accent);border:1px solid rgba(255,159,10,.2)}
+.d-hard{background:rgba(255,69,58,.12);color:var(--red);border:1px solid rgba(255,69,58,.2)}
+
+/* ATOMIC BOX */
+.atomic{background:rgba(255,159,10,.05);border:1px solid rgba(255,159,10,.2);border-radius:var(--r);padding:24px;position:relative;overflow:hidden}
+.atomic::before{content:'ATOMIC';position:absolute;top:50%;right:20px;transform:translateY(-50%);font-family:'DM Serif Display',serif;font-size:60px;color:rgba(255,159,10,.04);letter-spacing:.1em;pointer-events:none}
+
+/* DB FUNC */
+.dbfunc{display:flex;flex-direction:column;gap:6px}
+.dbf{display:flex;align-items:baseline;gap:12px;padding:11px 16px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid transparent;transition:all .2s}
+.dbf:hover{border-color:var(--border)}
+.dbf-name{font-family:'Courier New',monospace;font-size:12px;color:var(--blue);white-space:nowrap;flex-shrink:0}
+.dbf-desc{font-size:12px;color:var(--text2);line-height:1.5}
+
+/* FOOTER */
+footer{margin-top:120px;padding:60px 40px;border-top:1px solid var(--border);text-align:center}
+.ft{font-family:'DM Serif Display',serif;font-size:28px;color:var(--text);margin-bottom:8px}
+.fs{font-size:14px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase}
+
+/* DIVIDER */
+.div{height:1px;background:var(--border);margin:36px 0}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="g1"></div><div class="g2"></div><div class="g3"></div>
+  <div class="pill"><div class="pill-dot"></div>vorp_illegal · Gang Mission Sistemi</div>
+  <h1>Gang<br><em>Missions</em></h1>
+  <p class="hero-sub">Modüler, genişletilebilir çete görev sistemi — veritabanından client stage handler'larına kadar tam mimari dökümanı.</p>
+
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-val" style="color:var(--accent)">10</div><div class="hstat-label">Hazır Görev Tipi</div></div>
+    <div class="hstat"><div class="hstat-val" style="color:var(--blue)">13</div><div class="hstat-label">Stage Handler</div></div>
+    <div class="hstat"><div class="hstat-val" style="color:var(--green)">15</div><div class="hstat-label">DB Fonksiyonu</div></div>
+    <div class="hstat"><div class="hstat-val" style="color:var(--purple)">3</div><div class="hstat-label">Yeni DB Tablosu</div></div>
+  </div>
+
+  <div class="hero-nav">
+    <a href="#genel">Genel Akış</a>
+    <a href="#veritabani">Veritabanı</a>
+    <a href="#config">Görev Tipleri</a>
+    <a href="#stages">Stage'ler</a>
+    <a href="#server">Server Mantığı</a>
+    <a href="#client">Client Thread</a>
+    <a href="#handlers">Stage Handler'lar</a>
+    <a href="#dispatch">Dispatch & Polis</a>
+    <a href="#akis">Tam Akış</a>
+  </div>
+
+  <div class="scroll-hint"><div class="scroll-line"></div>SCROLL</div>
+</div>
+
+<!-- STICKY NAV -->
+<nav class="snav">
+  <a href="index.html" style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.4);text-decoration:none;font-size:12px;font-weight:500;margin-right:20px;flex-shrink:0;transition:color .2s" onmouseover="this.style.color='rgba(255,255,255,0.85)'" onmouseout="this.style.color='rgba(255,255,255,0.4)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>Ana Sayfa</a><div class="nlogo">VORP <span>Missions</span></div>
+  <a href="#genel">Genel</a>
+  <a href="#veritabani">Veritabanı</a>
+  <a href="#config">Görev Tipleri</a>
+  <a href="#stages">Stage'ler</a>
+  <a href="#server">Server</a>
+  <a href="#client">Client</a>
+  <a href="#handlers">Handler'lar</a>
+  <a href="#dispatch">Dispatch</a>
+  <a href="#akis">Tam Akış</a>
+</nav>
+
+<div class="wrap">
+
+  <!-- GENEL -->
+  <section id="genel">
+    <div class="eyebrow">00 — Sistem Özeti</div>
+    <h2>GTA Tarzı Görev<br><em>Motoru</em></h2>
+    <p class="lead">Oyuncu NPC'ye gidip [E] basar, sıralı aşamaları tamamlar ve ödül kazanır. Arka planda server otomatik görev üretir, polis uyarısı gönderir ve race condition'lara karşı atomik atama yapar.</p>
+
+    <!-- Basit Akış -->
+    <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:32px">
+      <div style="padding:16px 22px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border);font-size:13px;font-weight:600;color:var(--text)">Temel Oyuncu Deneyimi</div>
+      <div style="display:flex;align-items:center;flex-wrap:wrap;padding:24px 22px;gap:0">
+        <div style="text-align:center;flex:1;min-width:100px;padding:8px">
+          <div style="font-size:28px;margin-bottom:8px">🚶</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">NPC'ye Git</div>
+          <div style="font-size:11px;color:var(--text2)">Haritada blip görünür</div>
+        </div>
+        <div style="color:var(--text3);font-size:20px;flex-shrink:0">→</div>
+        <div style="text-align:center;flex:1;min-width:100px;padding:8px">
+          <div style="font-size:28px;margin-bottom:8px">⌨️</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">[E] Bas</div>
+          <div style="font-size:11px;color:var(--text2)">Görev al, kontroller geçilir</div>
+        </div>
+        <div style="color:var(--text3);font-size:20px;flex-shrink:0">→</div>
+        <div style="text-align:center;flex:1;min-width:100px;padding:8px">
+          <div style="font-size:28px;margin-bottom:8px">🎯</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Aşamaları Tamamla</div>
+          <div style="font-size:11px;color:var(--text2)">goto → kill → deliver → return</div>
+        </div>
+        <div style="color:var(--text3);font-size:20px;flex-shrink:0">→</div>
+        <div style="text-align:center;flex:1;min-width:100px;padding:8px">
+          <div style="font-size:28px;margin-bottom:8px">💰</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text);margin-bottom:4px">Ödül Kazan</div>
+          <div style="font-size:11px;color:var(--text2)">400–4500 arası değişken</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="g-3">
+      <div class="glass" style="padding:24px">
+        <div style="font-size:26px;margin-bottom:12px">⚖️</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Atomik Atama</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6">UPDATE WHERE status='available' + affectedRows kontrolü. İki oyuncu aynı görevi aynı anda alamaz.</p>
+      </div>
+      <div class="glass" style="padding:24px">
+        <div style="font-size:26px;margin-bottom:12px">🔄</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Otomatik Havuz</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6">Server her 30 dakikada bir weighted random seçimle görev havuzunu doldurur. Online çete üyelerine mail gider.</p>
+      </div>
+      <div class="glass" style="padding:24px">
+        <div style="font-size:26px;margin-bottom:12px">🚔</div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px">Polis Dispatch</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.6">dispatch=true olan görevlerde başlangıçtan 15 saniye sonra online polis memurlarına konum+bildirim gider.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- VERİTABANI -->
+  <section id="veritabani">
+    <div class="eyebrow">01 — gang_missions.sql</div>
+    <h2>Üç Yeni<br><em>Veritabanı Tablosu</em></h2>
+    <p class="lead">Admin yönetiminden runtime instance'lara kadar her şey ayrı tablolarda. NPC konumu değiştirmek için tek satır güncellemek yeterli.</p>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- tablet_gang_mission_types -->
+      <div class="schema">
+        <div class="sh"><div class="dot" style="background:var(--accent)"></div>tablet_gang_mission_types — Görev Tipi Şablonları</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+          <div>
+            <div class="sr"><div class="sf">mission_type</div><div class="sd">VARCHAR(50) PK — 'surveillance', 'assassination' vb.</div></div>
+            <div class="sr"><div class="sf">display_name</div><div class="sd">Görünen ad — 'Gözetleme', 'Suikast'</div></div>
+            <div class="sr"><div class="sf">dispatch</div><div class="sd">BOOLEAN — Polise bildirim gidsin mi?</div></div>
+            <div class="sr"><div class="sf">dispatch_code</div><div class="sd">Polis kodu — '10-71' gibi</div></div>
+            <div class="sr"><div class="sf">min_police</div><div class="sd">INT — Minimum online polis sayısı (0,1,2,3)</div></div>
+            <div class="sr"><div class="sf">min_reward</div><div class="sd">INT — Minimum ödül miktarı</div></div>
+            <div class="sr"><div class="sf">max_reward</div><div class="sd">INT — Maksimum ödül miktarı</div></div>
+            <div class="sr"><div class="sf">duration_minutes</div><div class="sd">INT — Görev süresi (dakika)</div></div>
+          </div>
+          <div>
+            <div class="sr"><div class="sf">cooldown_minutes</div><div class="sd">INT — Tekrar alma bekleme süresi</div></div>
+            <div class="sr"><div class="sf">stages_json</div><div class="sd">LONGTEXT — JSON: aşama dizisi (goto, kill, return...)</div></div>
+            <div class="sr"><div class="sf">min_gang_rank</div><div class="sd">INT — Minimum çete rankı</div></div>
+            <div class="sr"><div class="sf">difficulty</div><div class="sd">ENUM — 'easy', 'medium', 'hard'</div></div>
+            <div class="sr"><div class="sf">target_model</div><div class="sd">Hedef NPC modeli (suikast vb.)</div></div>
+            <div class="sr"><div class="sf">target_vehicle</div><div class="sd">Hedef araç modeli (hırsızlık vb.)</div></div>
+            <div class="sr"><div class="sf">minigame_type</div><div class="sd">retro_minigames tipi (lockpick, hack...)</div></div>
+            <div class="sr"><div class="sf">weight</div><div class="sd">INT — Havuzda seçilme ağırlığı (100 = normal)</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- tablet_gang_missions -->
+      <div class="schema">
+        <div class="sh"><div class="dot" style="background:var(--blue)"></div>tablet_gang_missions — Runtime Görev Instance'ları (Havuz)</div>
+        <div class="sr"><div class="sf">id</div><div class="sd">AUTO_INCREMENT PK</div></div>
+        <div class="sr"><div class="sf">mission_type</div><div class="sd">Hangi şablondan üretildi</div></div>
+        <div class="sr"><div class="sf">mission_data</div><div class="sd">LONGTEXT JSON — aşamalar, koordinatlar, ilerleme durumu</div></div>
+        <div class="sr"><div class="sf">reward_amount</div><div class="sd">Bu instance'ın ödülü (min–max arası random)</div></div>
+        <div class="sr"><div class="sf">assigned_citizenid</div><div class="sd">Kime atandı (NULL = havuzda müsait)</div></div>
+        <div class="sr"><div class="sf">assigned_gang_id</div><div class="sd">Hangi çete aldı</div></div>
+        <div class="sr"><div class="sf">status</div><div class="sd"><span class="tag to">available</span> <span class="tag tb2">assigned</span> <span class="tag" style="background:rgba(100,210,255,.1);color:var(--teal);border:1px solid rgba(100,210,255,.2)">in_progress</span> <span class="tag tg">completed</span> <span class="tag tr">failed</span> <span class="tag tp">expired</span></div></div>
+        <div class="sr"><div class="sf">created_at / expires_at</div><div class="sd">Zaman damgaları — 5 dakikada bir temizlik çalışır</div></div>
+      </div>
+
+      <!-- NPC tablosu -->
+      <div class="schema">
+        <div class="sh"><div class="dot" style="background:var(--green)"></div>tablet_gang_mission_npc — Görev NPC Konfigürasyonu</div>
+        <div class="sr"><div class="sf">id = 1</div><div class="sd">Tek satır (sabit). Admin panelden güncellenir.</div></div>
+        <div class="sr"><div class="sf">npc_model</div><div class="sd">GTA ped modeli</div></div>
+        <div class="sr"><div class="sf">position_x/y/z</div><div class="sd">Dünya koordinatları</div></div>
+        <div class="sr"><div class="sf">heading</div><div class="sd">NPC yön açısı</div></div>
+        <div class="sr"><div class="sf">is_active</div><div class="sd">NPC aktif mi? FALSE = sistem kapalı</div></div>
+      </div>
+
+    </div>
+
+    <!-- DB Functions -->
+    <div style="margin-top:28px;font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px">15 Yeni DB Fonksiyonu</div>
+    <div class="dbfunc">
+      <div class="dbf"><div class="dbf-name">DB.GetMissionNPC(cb)</div><div class="dbf-desc">NPC konfigini getir (konum, model)</div></div>
+      <div class="dbf"><div class="dbf-name">DB.UpdateMissionNPC(data, cb)</div><div class="dbf-desc">NPC konumunu güncelle (admin panel)</div></div>
+      <div class="dbf"><div class="dbf-name">DB.GetActiveMissionTypes(cb)</div><div class="dbf-desc">Aktif görev şablonlarını listele</div></div>
+      <div class="dbf"><div class="dbf-name">DB.GetAvailableMissions(cb)</div><div class="dbf-desc">Havuzdaki müsait görevleri getir</div></div>
+      <div class="dbf"><div class="dbf-name">DB.GetAvailableMissionCount(cb)</div><div class="dbf-desc">Müsait görev sayısını say (havuz kontrolü için)</div></div>
+      <div class="dbf"><div class="dbf-name">DB.CreateMission(type, data, reward, duration, cb)</div><div class="dbf-desc">Yeni görev instance'ı oluştur</div></div>
+      <div class="dbf"><div class="dbf-name">DB.AssignMission(id, citizenid, gangId, duration, cb)</div><div class="dbf-desc"><span class="tag to">ATOMIC</span> UPDATE WHERE status='available' + affectedRows kontrolü</div></div>
+      <div class="dbf"><div class="dbf-name">DB.StartMission(id, cb)</div><div class="dbf-desc">assigned → in_progress</div></div>
+      <div class="dbf"><div class="dbf-name">DB.UpdateMissionData(id, data, cb)</div><div class="dbf-desc">Aşama ilerlemesini JSON olarak kaydet</div></div>
+      <div class="dbf"><div class="dbf-name">DB.CompleteMission2(id, cb)</div><div class="dbf-desc">in_progress → completed + completed_at</div></div>
+      <div class="dbf"><div class="dbf-name">DB.FailMission2(id, cb)</div><div class="dbf-desc">→ failed (CompleteQuest/FailQuest ile isim çakışması önlendi)</div></div>
+      <div class="dbf"><div class="dbf-name">DB.GetPlayerActiveMission(citizenid, cb)</div><div class="dbf-desc">Oyuncunun şu anki aktif görevi</div></div>
+      <div class="dbf"><div class="dbf-name">DB.GetPlayerLastMissionTime(citizenid, type, cb)</div><div class="dbf-desc">Cooldown kontrolü için son tamamlama zamanı</div></div>
+      <div class="dbf"><div class="dbf-name">DB.CleanupExpiredMissions(cb)</div><div class="dbf-desc">expires_at geçmiş görevleri expired yap (5dk'da bir)</div></div>
+      <div class="dbf"><div class="dbf-name">DB.SeedMissionType(type, data, cb)</div><div class="dbf-desc">INSERT IGNORE — Config'den DB'ye ilk yükleme</div></div>
+    </div>
+  </section>
+
+  <!-- CONFIG / GÖREV TİPLERİ -->
+  <section id="config">
+    <div class="eyebrow">02 — config_missions.lua</div>
+    <h2>10 Hazır<br><em>Görev Tipi</em></h2>
+    <p class="lead">shared_script olarak hem client hem server yükler. Yeni görev eklemek için tabloya entry eklemek yeterli — kod değişikliği gerekmez.</p>
+
+    <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:28px">
+      <table class="mt-table">
+        <thead>
+          <tr>
+            <th>Görev Tipi</th>
+            <th>Zorluk</th>
+            <th>Dispatch</th>
+            <th>Min Polis</th>
+            <th>Ödül Aralığı</th>
+            <th>Ağırlık</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>surveillance</td><td><span class="dbadge d-easy">easy</span></td><td><span class="tag tg">Hayır</span></td><td style="color:var(--green)">0</td><td style="color:var(--text2)">500–1200</td><td style="color:var(--accent)">100</td></tr>
+          <tr><td>assassination</td><td><span class="dbadge d-hard">hard</span></td><td><span class="tag tr">Evet</span></td><td style="color:var(--red)">1</td><td style="color:var(--text2)">1500–3500</td><td style="color:var(--text2)">60</td></tr>
+          <tr><td>vehicle_theft</td><td><span class="dbadge d-med">medium</span></td><td><span class="tag tr">Evet</span></td><td style="color:var(--red)">1</td><td style="color:var(--text2)">1000–2500</td><td style="color:var(--text2)">80</td></tr>
+          <tr><td>smuggling_delivery</td><td><span class="dbadge d-easy">easy</span></td><td><span class="tag tg">Hayır</span></td><td style="color:var(--green)">0</td><td style="color:var(--text2)">800–1800</td><td style="color:var(--accent)">100</td></tr>
+          <tr><td>armed_recovery</td><td><span class="dbadge d-hard">hard</span></td><td><span class="tag tr">Evet</span></td><td style="color:var(--red)">2</td><td style="color:var(--text2)">2000–4500</td><td style="color:var(--text3)">40</td></tr>
+          <tr><td>truck_hijack</td><td><span class="dbadge d-hard">hard</span></td><td><span class="tag tr">Evet</span></td><td style="color:var(--red)">1</td><td style="color:var(--text2)">1500–3000</td><td style="color:var(--text3)">50</td></tr>
+          <tr><td>dead_drop</td><td><span class="dbadge d-easy">easy</span></td><td><span class="tag tg">Hayır</span></td><td style="color:var(--green)">0</td><td style="color:var(--text2)">400–1000</td><td style="color:var(--accent)">120</td></tr>
+          <tr><td>intimidation</td><td><span class="dbadge d-med">medium</span></td><td><span class="tag tg">Hayır</span></td><td style="color:var(--green)">0</td><td style="color:var(--text2)">600–1400</td><td style="color:var(--text2)">80</td></tr>
+          <tr><td>evidence_destruction</td><td><span class="dbadge d-med">medium</span></td><td><span class="tag tr">Evet</span></td><td style="color:var(--red)">1</td><td style="color:var(--text2)">800–2000</td><td style="color:var(--text2)">70</td></tr>
+          <tr><td>weapon_cache</td><td><span class="dbadge d-med">medium</span></td><td><span class="tag tg">Hayır</span></td><td style="color:var(--green)">0</td><td style="color:var(--text2)">1200–2800</td><td style="color:var(--text2)">60</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="g-2">
+      <div class="hbox hb-o">
+        <div class="hbox-title">Weighted Random Seçim</div>
+        <p><strong>weight</strong> alanı seçilme olasılığını belirler. Ağırlık 120 olan <code style="color:var(--accent)">dead_drop</code>, ağırlık 40 olan <code style="color:var(--accent)">armed_recovery</code>'dan 3× daha sık seçilir. Yeni görev ekleyince ağırlığı da ayarla.</p>
+      </div>
+      <div class="hbox hb-b">
+        <div class="hbox-title">Yeni Görev Eklemek</div>
+        <p>Config tablosuna entry ekle, stages dizisini tanımla — bitti. Server sonraki döngüde otomatik seed eder ve havuza dahil eder. Sıfır restart gerektirir.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STAGE'LER -->
+  <section id="stages">
+    <div class="eyebrow">03 — Aşama Tipleri (Stages)</div>
+    <h2>13 Stage<br><em>Handler'ı</em></h2>
+    <p class="lead">Her görev sıralı aşamalardan oluşur. Her aşama kendi thread'ini oluşturur ve koşul sağlandığında sonraki aşamaya geçer.</p>
+
+    <div style="border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:28px">
+      <table class="st-table">
+        <thead><tr><th>Stage Tipi</th><th>Ne Yapar</th></tr></thead>
+        <tbody>
+          <tr><td>goto</td><td>Koordinata git — oyuncu waypoint'e ulaşınca otomatik ilerler</td></tr>
+          <tr><td>observe</td><td>Bölgede X saniye kal — progress bar ile geri sayım gösterilir</td></tr>
+          <tr><td>kill_npc</td><td>Hedef NPC spawn olur, silahlıdır — öldürünce ilerler</td></tr>
+          <tr><td>combat_zone</td><td>Belirtilen sayıda (hostileCount) düşman NPC spawn olur — hepsi ölünce ilerler</td></tr>
+          <tr><td>pickup</td><td>Prop spawn olur — <strong style="color:var(--text)">[E]</strong> ile alınca ilerler</td></tr>
+          <tr><td>deliver</td><td>Teslim noktasına yürüyerek git — zone'a girince ilerler</td></tr>
+          <tr><td>deliver_vehicle</td><td>Belirli aracı teslim noktasına götür — araçla zone'a girince ilerler</td></tr>
+          <tr><td>hijack</td><td>Kamyon + şoför NPC spawn olur — araca binince şoförü çıkarır, ilerler</td></tr>
+          <tr><td>goto_intercept</td><td>Hareketli hedefe git (goto ile aynı mekanik, farklı label)</td></tr>
+          <tr><td>minigame</td><td>retro_minigames başlatır (lockpick, hack, wiring vb.) — başarı = ilerle</td></tr>
+          <tr><td>flee</td><td>Bölgeden X metre uzaklaş — mesafeye ulaşınca ilerler</td></tr>
+          <tr><td>interact_npc</td><td>NPC spawn, [E] ile X saniyelik etkileşim animasyonu — biter = ilerler</td></tr>
+          <tr><td>destroy</td><td>Prop spawn, [E] ile X saniyelik imha animasyonu — tamamlanınca ilerler</td></tr>
+          <tr><td>return</td><td>Ana NPC'ye geri dön — [E] ile görevi tamamla, ödül al</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="hbox hb-b">
+      <div class="hbox-title">Timer Bar</div>
+      <p><code style="color:var(--blue)">observe</code>, <code style="color:var(--blue)">flee</code>, <code style="color:var(--blue)">interact_npc</code>, <code style="color:var(--blue)">destroy</code> aşamalarında ekranın altında progress bar görünür: <strong style="color:var(--text)">[=========&gt;          ] Gözlemleniyor 45%</strong></p>
+    </div>
+  </section>
+
+  <!-- SERVER -->
+  <section id="server">
+    <div class="eyebrow">04 — server/gang_missions.lua</div>
+    <h2>Server Tarafı<br><em>Mantığı</em></h2>
+    <p class="lead">Initialization, görev havuzu oluşturma, atomik atama ve oyuncu bağlantı yönetimi.</p>
+
+    <div class="g-2" style="margin-bottom:24px">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Resource Başlangıcı</div>
+        <div class="fl">
+          <div class="fi"><div class="fn">1</div><div class="fb"><div class="ft">3 saniye bekle</div><div class="fd">Diğer resource'ların yüklenmesi için.</div></div></div>
+          <div class="fi"><div class="fn">2</div><div class="fb"><div class="ft">Config'den DB'ye seed et</div><div class="fd"><code style="color:var(--accent);font-size:12px">DB.SeedMissionType()</code> — INSERT IGNORE. Varsa atlar, yoksa ekler.</div></div></div>
+          <div class="fi"><div class="fn">3</div><div class="fb"><div class="ft">NPC konfigini yükle</div><div class="fd">DB'den pozisyon ve model okunur.</div></div></div>
+          <div class="fi"><div class="fn">4</div><div class="fb"><div class="ft">Tüm client'lara NPC spawn</div><div class="fd">Online oyuncular NPC'yi görür, blip eklenir.</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Her 30 Dakika: GenerateMissions()</div>
+        <div class="fl">
+          <div class="fi"><div class="fn">1</div><div class="fb"><div class="ft">Havuzu kontrol et</div><div class="fd">poolSize (5) − mevcutSayı = kaç görev üretilmeli?</div></div></div>
+          <div class="fi"><div class="fn">2</div><div class="fb"><div class="ft">Weighted random tip seçimi</div><div class="fd">weight alanına göre olasılıklı seçim. Ağırlık 120 = 3× daha sık.</div></div></div>
+          <div class="fi"><div class="fn">3</div><div class="fb"><div class="ft">Rastgele koordinat üret</div><div class="fd">NPC konumundan 500–2000m arası. mission_data JSON oluşturulur.</div></div></div>
+          <div class="fi"><div class="fn">4</div><div class="fb"><div class="ft">DB'ye ekle + mail gönder</div><div class="fd">status='available'. Online çete üyelerine "yeni iş var" maili.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Atomik Atama -->
+    <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px">Görev Atama — requestMission Event</div>
+    <div class="atomic" style="margin-bottom:24px">
+      <div class="cl">
+        <div class="ci-item"><div class="cii ci-b">1</div><div><div class="ct"><strong>Kimlik Al</strong></div><div class="cs2">Bridge.GetPlayerIdentifier(src) → citizenid</div></div></div>
+        <div class="ci-item"><div class="cii ci-o">2</div><div><div class="ct"><strong>Çete Üyesi mi?</strong></div><div class="cs2">DB.GetGangMember(citizenid) — değilse <span class="tag tr">red</span></div></div></div>
+        <div class="ci-item"><div class="cii ci-o">3</div><div><div class="ct"><strong>Zaten Aktif Görevi Var mı?</strong></div><div class="cs2">DB.GetPlayerActiveMission — varsa <span class="tag tr">red</span></div></div></div>
+        <div class="ci-item"><div class="cii ci-o">4</div><div><div class="ct"><strong>Havuzu Çek + Filtreleme</strong></div><div class="cs2">rank kontrolü + min_police karşılaştırması. Uygun görev yoksa <span class="tag tr">red</span></div></div></div>
+        <div class="ci-item" style="background:rgba(255,159,10,.06);border-color:rgba(255,159,10,.2)">
+          <div class="cii ci-o">⚡</div>
+          <div>
+            <div class="ct"><strong style="color:var(--accent)">Atomik Atama — Race Condition Koruması</strong></div>
+            <div class="cs2"><code style="color:var(--accent);font-size:12px">UPDATE ... WHERE status='available'</code> → affectedRows > 0 ise başarılı. İki oyuncu aynı anda denerse sadece biri kazanır.</div>
+          </div>
+        </div>
+        <div class="ci-item"><div class="cii ci-b">6</div><div><div class="ct"><strong>StartMission + Client Event</strong></div><div class="cs2">assigned → in_progress. TriggerClientEvent ile görev verisi oyuncuya gönderilir.</div></div></div>
+        <div class="ci-item"><div class="cii ci-g">7</div><div><div class="ct"><strong>Dispatch=true ise polis uyarısı</strong></div><div class="cs2">15 saniye sonra DispatchPoliceAlert() — konumu ve polis kodunu online polislere gönderir.</div></div></div>
+      </div>
+    </div>
+
+    <div class="g-2">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Diğer Server Olayları</div>
+        <div class="cl">
+          <div class="ci-item"><div class="cii ci-p">⏱️</div><div><div class="ct"><strong>Her 5 Dakika: CleanupExpired</strong></div><div class="cs2">available/assigned/in_progress durumundaki süresi dolmuş görevler → expired</div></div></div>
+          <div class="ci-item"><div class="cii ci-r">❌</div><div><div class="ct"><strong>Oyuncu Disconnect</strong></div><div class="cs2">playerDropped → aktif görevi varsa otomatik failed yapılır</div></div></div>
+          <div class="ci-item"><div class="cii ci-g">✓</div><div><div class="ct"><strong>advanceStage Event</strong></div><div class="cs2">Son aşamaysa → CompleteMission + AddMoney. Değilse currentStage++ → client'ı güncelle</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Polis Sayacı</div>
+        <div class="code"><span class="ck">local function</span> <span class="cv">CountOnDutyPolice</span>()
+  <span class="ck">local</span> count = <span class="cn">0</span>
+  <span class="ck">for</span> _, pSrc <span class="ck">in</span> <span class="cv">ipairs</span>(Bridge.GetPlayers()) <span class="ck">do</span>
+    <span class="ck">local</span> job = Bridge.GetPlayerJob(pSrc)
+    <span class="ck">if</span> (job.name == <span class="cs">'police'</span>
+     <span class="ck">or</span> job.name == <span class="cs">'sheriff'</span>)
+    <span class="ck">and</span> job.onduty <span class="ck">then</span>
+      count = count + <span class="cn">1</span>
+    <span class="ck">end</span>
+  <span class="ck">end</span>
+  <span class="ck">return</span> count
+<span class="ck">end</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLIENT -->
+  <section id="client">
+    <div class="eyebrow">05 — client/gang_missions.lua</div>
+    <h2>Client Tarafı<br><em>Mantığı</em></h2>
+    <p class="lead">NPC spawn, etkileşim thread'i ve stage handler dispatch sistemi. Her aşama kendi thread'ini oluşturur.</p>
+
+    <div class="ss g-4" style="grid-template-columns:repeat(4,1fr)">
+      <div class="sc"><div class="sv" style="color:var(--blue)">20m</div><div class="sl">NPC algılama mesafesi</div></div>
+      <div class="sc"><div class="sv" style="color:var(--green)">3m</div><div class="sl">[E] tuşu görünür</div></div>
+      <div class="sc"><div class="sv" style="color:var(--accent)">15s</div><div class="sl">Dispatch gecikmesi</div></div>
+      <div class="sc"><div class="sv" style="color:var(--purple)">5s</div><div class="sl">Model yükleme timeout</div></div>
+    </div>
+
+    <div class="g-2" style="margin-bottom:24px">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">NPC Spawn Süreci</div>
+        <div class="fl">
+          <div class="fi"><div class="fn">1</div><div class="fb"><div class="ft">Server'dan NPC verisi gelir</div><div class="fd">model, x, y, z, heading</div></div></div>
+          <div class="fi"><div class="fn">2</div><div class="fb"><div class="ft">Model yüklenir (max 5 saniye)</div><div class="fd">RequestModel → HasModelLoaded döngüsü</div></div></div>
+          <div class="fi"><div class="fn">3</div><div class="fb"><div class="ft">CreatePed + ayarlar</div><div class="fd">Invincible, frozen, blip eklendi</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">NPC Etkileşim Thread'i</div>
+        <div class="code"><span class="cc">-- Her frame:</span>
+Uzakta (>20m)   → <span class="cn">2000</span>ms uyku (0 CPU)
+Yakında (<20m)  → <span class="cn">500</span>ms uyku
+Çok yakında (<3m) →
+  <span class="cv">DrawHelpText</span>(<span class="cs">"[E] Görev Al"</span>)
+  [E] basıldı →
+    Aktif görev yok → <span class="cv">requestMission</span>
+    Aktif görev var + return aşaması
+               → <span class="cv">advanceStage</span></div>
+      </div>
+    </div>
+
+    <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Stage Handler Dispatch Sistemi</div>
+    <div class="pb">
+      <div class="pbh"><div class="pbicon">⚙️</div><div class="pbtitle">StageHandlers[type](stage, missionId)</div><div class="pbbadge">13 handler</div></div>
+      <div class="pbb">
+        <div class="code"><span class="cc">-- Mission başladığında:</span>
+<span class="ck">local</span> currentStage = missionData.stages[missionData.currentStage]
+<span class="cv">StageHandlers</span>[currentStage.type](currentStage, missionId)
+
+<span class="cc">-- Server'dan stage update gelince:</span>
+missionData.currentStage = missionData.currentStage + <span class="cn">1</span>
+<span class="cc">-- Yeni handler otomatik başlar</span></div>
+        <p style="font-size:13px;color:var(--text2);margin-top:12px;line-height:1.6">Her handler kendi thread'ini oluşturur. Aşama bitince <code style="color:var(--blue)">advanceStage</code> server event'ini tetikler ve kendini sonlandırır. Entity temizliği her geçişte ve görev bitişinde otomatik yapılır.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HANDLERS -->
+  <section id="handlers">
+    <div class="eyebrow">06 — Stage Handler Detayları</div>
+    <h2>Kritik Handler<br><em>Mekanikleri</em></h2>
+    <p class="lead">kill_npc, combat_zone ve hijack handler'larının iç işleyişi — spawn, davranış ve geçiş koşulları.</p>
+
+    <div style="display:flex;flex-direction:column;gap:16px">
+
+      <!-- kill_npc -->
+      <div class="pb">
+        <div class="pbh"><div class="pbicon">🎯</div><div class="pbtitle">kill_npc Handler</div><div class="pbbadge">Hedef öldürme</div></div>
+        <div class="pbb">
+          <div class="g-2">
+            <div class="cl">
+              <div class="ci-item"><div class="cii ci-b">1</div><div><div class="ct">Waypoint koy</div></div></div>
+              <div class="ci-item"><div class="cii ci-b">2</div><div><div class="ct">Oyuncu 80m'ye yaklaşana kadar bekle</div><div class="cs2">Uzaktayken hiç işlem yok — CPU tasarrufu</div></div></div>
+              <div class="ci-item"><div class="cii ci-o">3</div><div><div class="ct">Hedef NPC spawn</div><div class="cs2">targetModel veya fallback model. Entity blip eklenir.</div></div></div>
+              <div class="ci-item"><div class="cii ci-o">4</div><div><div class="ct">NPC'ye silah ver</div><div class="cs2">GiveWeapon + ammo</div></div></div>
+            </div>
+            <div class="cl">
+              <div class="ci-item"><div class="cii ci-g">5</div><div><div class="ct">Her saniye kontrol</div><div class="cs2">IsEntityDead → advanceStage</div></div></div>
+              <div class="ci-item"><div class="cii ci-r">5b</div><div><div class="ct">Yakın mesafeye girince saldırtır</div><div class="cs2">Oyuncu 30m içindeyse TaskCombatPed</div></div></div>
+              <div class="ci-item"><div class="cii ci-p">6</div><div><div class="ct">Hedef öldü → advanceStage</div><div class="cs2">Blip ve NPC temizlenir</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- combat_zone -->
+      <div class="pb">
+        <div class="pbh"><div class="pbicon">💥</div><div class="pbtitle">combat_zone Handler</div><div class="pbbadge">hostileCount düşman</div></div>
+        <div class="pbb">
+          <div class="g-2">
+            <div class="cl">
+              <div class="ci-item"><div class="cii ci-b">1</div><div><div class="ct">Waypoint koy</div></div></div>
+              <div class="ci-item"><div class="cii ci-b">2</div><div><div class="ct">Oyuncu 80m'ye yaklaşana kadar bekle</div></div></div>
+              <div class="ci-item"><div class="cii ci-o">3</div><div><div class="ct">hostileCount adet NPC spawn et</div><div class="cs2">15m yarıçaplı rastgele dağılım. SMG verilir, kaçma devre dışı.</div></div></div>
+            </div>
+            <div class="cl">
+              <div class="ci-item"><div class="cii ci-g">4</div><div><div class="ct">Her saniye kontrol</div><div class="cs2">Tüm NPC'ler öldü mü? → advanceStage</div></div></div>
+              <div class="ci-item"><div class="cii ci-r">4b</div><div><div class="ct">Yakın olanları saldırtır</div><div class="cs2">TaskCombatPed loop</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- hijack -->
+      <div class="pb">
+        <div class="pbh"><div class="pbicon">🚛</div><div class="pbtitle">hijack Handler</div><div class="pbbadge">Kamyon kaçırma</div></div>
+        <div class="pbb">
+          <div class="g-2">
+            <div class="cl">
+              <div class="ci-item"><div class="cii ci-b">1</div><div><div class="ct">Waypoint koy</div></div></div>
+              <div class="ci-item"><div class="cii ci-b">2</div><div><div class="ct">Oyuncu 100m'ye yaklaşana kadar bekle</div></div></div>
+              <div class="ci-item"><div class="cii ci-o">3</div><div><div class="ct">Kamyon + şoför NPC spawn</div><div class="cs2">mule veya konfig'deki araç. Şofor TaskVehicleDriveWander ile dolaşır.</div></div></div>
+              <div class="ci-item"><div class="cii ci-o">4</div><div><div class="ct">Kamyona entity blip ekle</div></div></div>
+            </div>
+            <div class="cl">
+              <div class="ci-item"><div class="cii ci-g">5</div><div><div class="ct">Her saniye kontrol</div></div></div>
+              <div class="ci-item"><div class="cii ci-r">5a</div><div><div class="ct">Kamyon despawn olduysa → missionFailed</div><div class="cs2">Araç dünyadan silinmişse görev başarısız</div></div></div>
+              <div class="ci-item"><div class="cii ci-g">5b</div><div><div class="ct">Oyuncu kamyona bindiyse</div><div class="cs2">Şoförü çıkar + DeleteEntity → advanceStage</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- DISPATCH -->
+  <section id="dispatch">
+    <div class="eyebrow">07 — Dispatch & Polis Sistemi</div>
+    <h2>Polis Uyarı<br><em>Mekanizması</em></h2>
+    <p class="lead">dispatch=true olan görevlerde görev başladıktan 15 saniye sonra online ve görevdeki tüm polis memurlarına konum + kod gönderilir.</p>
+
+    <div class="g-2" style="margin-bottom:24px">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Dispatch Akışı</div>
+        <div class="fl">
+          <div class="fi"><div class="fn">1</div><div class="fb"><div class="ft">Görev başlar (in_progress)</div><div class="fd">dispatch_location kontrol edilir: mission_location veya npc_location</div></div></div>
+          <div class="fi"><div class="fn">2</div><div class="fb"><div class="ft">15 saniye bekle</div><div class="fd">Oyuncuya bir miktar tepki süresi tanımak için gecikme.</div></div></div>
+          <div class="fi"><div class="fn">3</div><div class="fb"><div class="ft">Online polis döngüsü</div><div class="fd">police + sheriff + onduty olan tüm oyunculara gönderim.</div></div></div>
+          <div class="fi"><div class="fn">4</div><div class="fb"><div class="ft">Bildirim + 120s Blip</div><div class="fd">Polis ekranında konum, dispatch_code ve mesaj görünür. 120 saniye sonra blip kaybolur.</div></div></div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:14px">Dispatch Alanları</div>
+        <div class="schema">
+          <div class="sh"><div class="dot" style="background:var(--red)"></div>Dispatch Konfigürasyonu</div>
+          <div class="sr"><div class="sf">dispatch</div><div class="sd">BOOLEAN — false ise bu blok tamamen atlanır</div></div>
+          <div class="sr"><div class="sf">dispatch_location</div><div class="sd">'mission_location' → görevin koordinatı<br>'npc_location' → NPC'nin koordinatı</div></div>
+          <div class="sr"><div class="sf">dispatch_code</div><div class="sd">Polis kodu — '10-71', '10-30' vb.</div></div>
+          <div class="sr"><div class="sf">dispatch_message_key</div><div class="sd">Locale key → çeviri sistemiyle mesaj</div></div>
+          <div class="sr"><div class="sf">min_police</div><div class="sd">Görev almak için gereken min online polis</div></div>
+        </div>
+        <div class="hbox hb-r" style="margin-top:12px">
+          <div class="hbox-title">min_police Mantığı</div>
+          <p>CountOnDutyPolice() < min_police ise görev havuzdan filtrelenir — atanmaz. Bu sayede offline sunucularda bazı görevler hiç çıkmaz.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GENEL AKIŞ -->
+  <section id="akis">
+    <div class="eyebrow">08 — Uçtan Uca Tam Akış</div>
+    <h2>Server'dan<br><em>GTA Dünyasına</em></h2>
+    <p class="lead">Resource başlangıcından oyuncunun ödülü almasına kadar her katman.</p>
+
+    <div class="pipeline" style="margin-bottom:32px">
+      <div class="ps">
+        <div class="pl"><div class="pl-layer" style="color:var(--purple)">Resource Start</div><div class="pl-file">gang_missions.lua</div></div>
+        <div class="parrow">↓</div>
+        <div class="pr">Config seed → NPC konfigini yükle → Online client'lara NPC spawn + blip gönder</div>
+      </div>
+      <div class="ps">
+        <div class="pl"><div class="pl-layer" style="color:var(--accent)">Her 30 Dakika</div><div class="pl-file">Server</div></div>
+        <div class="parrow">↓</div>
+        <div class="pr">Havuz eksik ise weighted random seçimle görev üret → DB'ye ekle (available) → Online çete üyelerine mail</div>
+      </div>
+      <div class="ps">
+        <div class="pl"><div class="pl-layer" style="color:var(--blue)">Oyuncu [E]</div><div class="pl-file">Client → Server</div></div>
+        <div class="parrow">↓</div>
+        <div class="pr"><strong>requestMission</strong> → çete kontrolü → aktif görev kontrolü → rank/polis filtre → <strong style="color:var(--accent)">ATOMIC ASSIGN</strong></div>
+      </div>
+      <div class="ps">
+        <div class="pl"><div class="pl-layer" style="color:var(--accent)">Dispatch</div><div class="pl-file">Server (15s sonra)</div></div>
+        <div class="parrow">↓</div>
+        <div class="pr">dispatch=true ise <strong>DispatchPoliceAlert()</strong> → Online police/sheriff + onduty → konum blip + polis kodu bildirimi</div>
+      </div>
+      <div class="ps">
+        <div class="pl"><div class="pl-layer" style="color:var(--teal)">Stage Loop</div><div class="pl-file">Client Thread</div></div>
+        <div class="parrow">↓</div>
+        <div class="pr"><strong>StageHandlers[type]()</strong> → her aşama kendi thread'ini çalıştırır → koşul sağlanınca <code style="color:var(--blue);font-size:12px">advanceStage</code> → server currentStage++ → sonraki handler başlar</div>
+      </div>
+      <div class="ps" style="background:rgba(48,209,88,.03)">
+        <div class="pl"><div class="pl-layer" style="color:var(--green)">Tamamlandı</div><div class="pl-file">Server + Client</div></div>
+        <div class="parrow"></div>
+        <div class="pr" style="color:var(--green)">Son aşama return → <strong>CompleteMission</strong> → <strong>AddMoney(reward)</strong> → Başarı bildirimi → Entity temizliği → Görev kapandı</div>
+      </div>
+    </div>
+
+    <div class="g-3">
+      <div class="oc"><div class="oe">🔒</div><div class="ot"><strong>Race Condition Koruması</strong> — Atomik UPDATE ile iki oyuncu aynı görevi hiçbir zaman alamaz</div></div>
+      <div class="oc"><div class="oe">🧹</div><div class="ot"><strong>Otomatik Temizlik</strong> — Her aşama geçişinde ve görev sonunda tüm NPC, araç, prop silinir</div></div>
+      <div class="oc"><div class="oe">📦</div><div class="ot"><strong>Locale Hazır</strong> — Her iki dilde ~80 çeviri anahtarı; tüm metinler merkezi locale dosyasında</div></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="ft">VORP Illegal</div>
+  <div class="fs">Gang Mission System · Mimari Dökümanı</div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+  },{threshold:.07});
+  document.querySelectorAll('section').forEach(s=>observer.observe(s));
+
+  const sections=document.querySelectorAll('section[id]');
+  const links=document.querySelectorAll('.snav a');
+  window.addEventListener('scroll',()=>{
+    let cur='';
+    sections.forEach(s=>{if(s.offsetTop-80<=scrollY)cur=s.id});
+    links.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+cur));
+  },{passive:true});
+</script>
+</body>
+</html>
